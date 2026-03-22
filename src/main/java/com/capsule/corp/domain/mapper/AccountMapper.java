@@ -1,5 +1,6 @@
 package com.capsule.corp.domain.mapper;
 
+import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionRequest;
 import com.capsule.corp.infrastructure.http.controller.resources.Account;
 import com.capsule.corp.infrastructure.http.controller.resources.enums.AccountStatus;
 import com.capsule.corp.infrastructure.http.controller.resources.request.OpenCreditAccountRequest;
@@ -9,6 +10,7 @@ import com.capsule.corp.infrastructure.http.controller.resources.ClientDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -34,5 +36,10 @@ public interface AccountMapper {
     @Mapping(target = "account", source = "account")
     @Mapping(target = "success", constant = "true")
     AccountDetailedResponse mapAccountDetailed(ClientDetails client, Account account);
+
+    @Mapping(target = "transactionId", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "accountNumber", expression = "java(account.getAccountNumber().toString())")
+    @Mapping(target = "amount", constant = "amount")
+    TransactionRequest mapAccountToTransaction(Account account, BigDecimal amount);
 
 }

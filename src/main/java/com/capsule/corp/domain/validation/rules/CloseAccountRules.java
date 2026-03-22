@@ -2,7 +2,7 @@ package com.capsule.corp.domain.validation.rules;
 
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.ClientRepository;
-import com.capsule.corp.infrastructure.http.clients.transactions.TransactionsServiceClient;
+import com.capsule.corp.infrastructure.http.clients.transactions.TransactionServiceClient;
 import com.capsule.corp.infrastructure.http.controller.resources.Account;
 import com.capsule.corp.infrastructure.http.controller.resources.enums.AccountStatus;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CloseAccountRules {
     private final ClientRepository clientRepository;
-    private final TransactionsServiceClient transactionsServiceClient;
+    private final TransactionServiceClient transactionServiceClient;
 
     public boolean canAccountBeClosed(Account account){
         log.info("Running Close Account Rules for account [{}]", account.getAccountNumber());

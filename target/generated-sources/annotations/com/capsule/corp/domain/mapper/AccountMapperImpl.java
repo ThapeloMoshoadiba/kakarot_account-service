@@ -1,11 +1,13 @@
 package com.capsule.corp.domain.mapper;
 
+import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionRequest;
 import com.capsule.corp.infrastructure.http.controller.resources.Account;
 import com.capsule.corp.infrastructure.http.controller.resources.ClientDetails;
 import com.capsule.corp.infrastructure.http.controller.resources.enums.AccountStatus;
 import com.capsule.corp.infrastructure.http.controller.resources.request.OpenCreditAccountRequest;
 import com.capsule.corp.infrastructure.http.controller.resources.response.AccountDetailedResponse;
 import com.capsule.corp.infrastructure.http.controller.resources.response.AccountSummaryResponse;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 import javax.annotation.processing.Generated;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-22T20:40:29+0200",
+    date = "2026-03-23T01:16:19+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -71,5 +73,20 @@ public class AccountMapperImpl implements AccountMapper {
         accountDetailedResponse.success( true );
 
         return accountDetailedResponse.build();
+    }
+
+    @Override
+    public TransactionRequest mapAccountToTransaction(Account account, BigDecimal amount) {
+        if ( account == null && amount == null ) {
+            return null;
+        }
+
+        TransactionRequest.TransactionRequestBuilder transactionRequest = TransactionRequest.builder();
+
+        transactionRequest.transactionId( UUID.randomUUID() );
+        transactionRequest.accountNumber( account.getAccountNumber().toString() );
+        transactionRequest.amount( new BigDecimal( "amount" ) );
+
+        return transactionRequest.build();
     }
 }

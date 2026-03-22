@@ -14,6 +14,7 @@ import com.capsule.corp.infrastructure.http.controller.resources.request.OpenCre
 import com.capsule.corp.infrastructure.http.controller.resources.enums.AccountStatus;
 import com.capsule.corp.infrastructure.http.controller.resources.response.AccountSummaryResponse;
 import com.capsule.corp.infrastructure.http.controller.resources.ClientDetails;
+import com.capsule.corp.infrastructure.http.clients.transactions.TransactionServiceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
     private final AccountMapper accountMapper;
+    private final TransactionServiceClient transactionServiceClient;
 
     Account account;
     ClientDetails client;
@@ -43,6 +45,8 @@ public class AccountService {
                 if (openAccountRules.canAccountBeOpened(client, openCreditAccountRequest)) {
                     Account newAccount = accountMapper.mapAccountEntity(client, openCreditAccountRequest);
                     accountRepository.save(newAccount);
+
+                    transactionServiceClient.openAccountTransaction(accountMapper.mapAccountToTransaction(account, openCreditAccountRequest.getCreditAmount()));
 
                     log.info("Credit Account successfully opened for Client [{}]", client.getCifNumber());
                     return accountMapper.mapAccountSummary(newAccount);
