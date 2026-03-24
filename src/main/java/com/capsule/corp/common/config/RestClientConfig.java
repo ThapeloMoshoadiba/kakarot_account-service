@@ -11,18 +11,20 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
-    @Bean(name = "transactionServiceClient")
-    public RestClient transactionService(final AppConfiguration.TransactionServiceConfig config) {
-        return RestClient.builder()
-                .requestFactory(getClientHttpRequestFactory(config.getReadTimeout(), config.getConnectionTimeout()))
-                .requestInterceptor(new WebExchangeLoggingInterceptor())
-                .build();
-    }
+  @Bean(name = "transactionServiceRestClient")
+  public RestClient transactionService(final AppConfiguration.TransactionServiceConfig config) {
+    return RestClient.builder()
+        .requestFactory(
+            getClientHttpRequestFactory(config.getReadTimeout(), config.getConnectionTimeout()))
+        .requestInterceptor(new WebExchangeLoggingInterceptor())
+        .build();
+  }
 
-    private ClientHttpRequestFactory getClientHttpRequestFactory(final int readTimeOut, final int connectionTimeOut) {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(readTimeOut);
-        factory.setConnectTimeout(connectionTimeOut);
-        return factory;
-    }
+  private ClientHttpRequestFactory getClientHttpRequestFactory(
+      final int readTimeOut, final int connectionTimeOut) {
+    SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+    factory.setReadTimeout(readTimeOut);
+    factory.setConnectTimeout(connectionTimeOut);
+    return factory;
+  }
 }

@@ -1,21 +1,22 @@
 package com.capsule.corp.domain.mapper;
 
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionRequest;
-import com.capsule.corp.infrastructure.http.controller.resources.Account;
-import com.capsule.corp.infrastructure.http.controller.resources.ClientDetails;
-import com.capsule.corp.infrastructure.http.controller.resources.enums.AccountStatus;
-import com.capsule.corp.infrastructure.http.controller.resources.request.OpenCreditAccountRequest;
-import com.capsule.corp.infrastructure.http.controller.resources.response.AccountDetailedResponse;
-import com.capsule.corp.infrastructure.http.controller.resources.response.AccountSummaryResponse;
+import com.capsule.corp.infrastructure.http.controllers.account.resources.Account;
+import com.capsule.corp.infrastructure.http.controllers.account.resources.request.OpenCreditAccountRequest;
+import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountDetailedResponse;
+import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountSummaryResponse;
+import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
+import com.capsule.corp.infrastructure.http.controllers.enums.AccountStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-23T01:16:19+0200",
+    date = "2026-03-24T13:46:44+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -36,7 +37,7 @@ public class AccountMapperImpl implements AccountMapper {
             account.initialCreditAmount( openCreditAccountRequest.getCreditAmount() );
         }
         account.accountId( UUID.randomUUID() );
-        account.createdAt( LocalDate.now() );
+        account.createdAt( LocalDateTime.now() );
         account.accountNumber( UUID.randomUUID() );
         account.accountStatus( AccountStatus.OPEN );
 

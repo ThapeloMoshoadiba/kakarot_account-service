@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "app")
 public class AppConfiguration {
 
-    @Data
-    @Component
-    @ConfigurationProperties(prefix = "app.integration.transaction-service")
-    public class TransactionServiceConfig extends IntegrationConfig {
-        private String openEndpoint;
-    }
+  @Data
+  @Component
+  @ConfigurationProperties(prefix = "app.integration.transaction-service")
+  public class TransactionServiceConfig extends IntegrationConfig {
+    private String openEndpoint;
+  }
 }

@@ -17,24 +17,28 @@ import org.springframework.web.client.RestClient;
 @RequiredArgsConstructor
 public class TransactionServiceClient {
 
-    private final AppConfiguration.TransactionServiceConfig config;
-    private final RestClient transactionRestClient;
+  private final AppConfiguration.TransactionServiceConfig config;
+  private final RestClient transactionServiceRestClient;
 
-    public void openAccountTransaction(final TransactionRequest transactionRequest) {
-        try {
-            ResponseEntity<TransactionResponse> response = transactionRestClient
-                    .method(HttpMethod.PUT)
-                    .uri("%s%s".formatted(config.getBaseUrl(), config.getOpenEndpoint()))
-                    .body(transactionRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .toEntity(new ParameterizedTypeReference<>() {});
+  public void openAccountTransaction(final TransactionRequest transactionRequest) {
+    try {
+      ResponseEntity<TransactionResponse> response =
+          transactionServiceRestClient
+              .method(HttpMethod.PUT)
+              .uri("%s%s".formatted(config.getBaseUrl(), config.getOpenEndpoint()))
+              .body(transactionRequest)
+              .contentType(MediaType.APPLICATION_JSON)
+              .retrieve()
+              .toEntity(new ParameterizedTypeReference<>() {});
 
-            if (response.getStatusCode().is2xxSuccessful()) {
-                log.info("Opening transaction successfully executed");
-            }
-        } catch (Exception e) {
-            log.error("Error Running Opening Balance Transaction: [{}] [{}]", transactionRequest.getAccountNumber(), e.getMessage());
-        }
+      if (response.getStatusCode().is2xxSuccessful()) {
+        log.info("Opening transaction successfully executed");
+      }
+    } catch (Exception e) {
+      log.error(
+          "Error Running Opening Balance Transaction: [{}] [{}]",
+          transactionRequest.getAccountNumber(),
+          e.getMessage());
     }
+  }
 }

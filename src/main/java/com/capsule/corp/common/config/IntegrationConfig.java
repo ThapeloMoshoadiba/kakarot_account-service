@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class IntegrationConfig {
 
-    private String baseUrl;
-    private int readTimeout = 60000;
-    private int connectionTimeout = 60000;
-    private int maxRetries = 1;
+  private String baseUrl;
+  private int readTimeout = 60000;
+  private int connectionTimeout = 60000;
+  private int maxRetries = 1;
 }

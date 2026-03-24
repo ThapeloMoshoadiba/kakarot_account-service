@@ -1,0 +1,45 @@
+{
+  "groups": [
+    {
+      "name": "app",
+      "type": "com.capsule.corp.common.config.AppConfiguration",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration"
+    },
+    {
+      "name": "app.integration.transaction-service",
+      "type": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.integration.transaction-service.base-url",
+      "type": "java.lang.String",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig"
+    },
+    {
+      "name": "app.integration.transaction-service.connection-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig",
+      "defaultValue": 60000
+    },
+    {
+      "name": "app.integration.transaction-service.max-retries",
+      "type": "java.lang.Integer",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig",
+      "defaultValue": 1
+    },
+    {
+      "name": "app.integration.transaction-service.open-endpoint",
+      "type": "java.lang.String",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig"
+    },
+    {
+      "name": "app.integration.transaction-service.read-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "com.capsule.corp.common.config.AppConfiguration$TransactionServiceConfig",
+      "defaultValue": 60000
+    }
+  ],
+  "hints": []
+}
