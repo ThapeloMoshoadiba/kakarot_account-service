@@ -1,12 +1,13 @@
 package com.capsule.corp.infrastructure.http.controllers.account;
 
 import com.capsule.corp.domain.service.AccountService;
-import com.capsule.corp.infrastructure.http.controllers.account.resources.request.CloseCreditAccountRequest;
+import com.capsule.corp.infrastructure.http.controllers.account.resources.request.BasicAccountRequest;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.request.OpenCreditAccountRequest;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +48,32 @@ public class AccountController {
     return accountService.getAccount(accountNumber, cifNumber);
   }
 
+  @Operation(summary = "Block Account")
+  @PutMapping("/block")
+  public AccountSummaryResponse blockAccount(
+      @RequestBody final BasicAccountRequest accountRequest) {
+    return accountService.blockAccount(accountRequest);
+  }
+
+  @Operation(summary = "Unblock Account")
+  @PutMapping("/unblock")
+  public AccountSummaryResponse unblockAccount(
+      @RequestBody final BasicAccountRequest accountRequest) {
+    return accountService.unblockAccount(accountRequest);
+  }
+
+  @Operation(summary = "Close Account With Balance")
+  @PutMapping("/close-balance")
+  public AccountSummaryResponse closeAccountWithBalance(
+      @RequestParam final BigDecimal amount,
+      @RequestBody final BasicAccountRequest accountRequest) {
+    return accountService.closeAccountWithBalance(accountRequest, amount);
+  }
+
   @Operation(summary = "Close Account")
   @PutMapping("/close")
   public AccountSummaryResponse closeAccount(
-      @RequestBody final CloseCreditAccountRequest closeCreditAccountRequest) {
-    return accountService.closeAccount(closeCreditAccountRequest);
+      @RequestBody final BasicAccountRequest accountRequest) {
+    return accountService.closeAccount(accountRequest);
   }
 }

@@ -41,4 +41,8 @@ public class TransactionServiceClient {
           e.getMessage());
     }
   }
+
+  public void getBalance() {
+    // we don't have it yet in transaction_service
+  }
 }

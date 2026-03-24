@@ -35,6 +35,13 @@ public class Account {
   AccountStatus accountStatus;
 
   BigDecimal initialCreditAmount;
+
+  LocalDateTime blockedAt;
+  String reasonForBlock;
+
+  LocalDateTime unblockedAt;
+  String reasonForUnblock;
+
   LocalDateTime closedAt;
   String reasonForClose;
 }

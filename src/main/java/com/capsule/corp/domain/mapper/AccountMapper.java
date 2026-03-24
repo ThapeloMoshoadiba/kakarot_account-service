@@ -10,6 +10,7 @@ import com.capsule.corp.infrastructure.http.controllers.enums.AccountStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,19 +28,19 @@ public interface AccountMapper {
   @Mapping(target = "initialCreditAmount", source = "openCreditAccountRequest.creditAmount")
   Account mapAccountEntity(ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest);
 
-  @Mapping(target = "accountNumber", source = "accountNumber")
-  @Mapping(target = "accountStatus", source = "accountStatus")
-  @Mapping(target = "initialCreditAmount", source = "initialCreditAmount")
+  @Mapping(target = "accountNumber", source = "account.accountNumber")
+  @Mapping(target = "accountStatus", source = "account.accountStatus")
+  @Mapping(target = "initialCreditAmount", source = "account.initialCreditAmount")
   @Mapping(target = "success", constant = "true")
   AccountSummaryResponse mapAccountSummary(Account account);
 
   @Mapping(target = "clientDetails", source = "client")
-  @Mapping(target = "account", source = "account")
+  @Mapping(target = "accounts", source = "accounts")
   @Mapping(target = "success", constant = "true")
-  AccountDetailedResponse mapAccountDetailed(ClientDetails client, Account account);
+  AccountDetailedResponse mapAccountDetailed(ClientDetails client, List<Account> accounts);
 
   @Mapping(target = "transactionId", expression = "java(UUID.randomUUID())")
-  @Mapping(target = "accountNumber", expression = "java(account.getAccountNumber().toString())")
-  @Mapping(target = "amount", constant = "amount")
+  @Mapping(target = "accountNumber", source = "account.accountNumber")
+  @Mapping(target = "amount", source = "amount")
   TransactionRequest mapAccountToTransaction(Account account, BigDecimal amount);
 }

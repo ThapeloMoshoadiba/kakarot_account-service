@@ -1,9 +1,8 @@
 package com.capsule.corp.domain.mapper;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
+import com.capsule.corp.infrastructure.http.controllers.client.resources.request.BasicClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.CreateClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.RemoveClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
 import com.capsule.corp.infrastructure.http.controllers.enums.ClientStatus;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-24T13:46:44+0200",
+    date = "2026-03-25T01:54:20+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -46,50 +45,9 @@ public class ClientMapperImpl implements ClientMapper {
             clientDetails.verifiedAnnualIncome( createClientRequest.getVerifiedAnnualIncome() );
         }
         clientDetails.cifNumber( cifNumber );
+        clientDetails.clientId( UUID.randomUUID() );
         clientDetails.createdAt( LocalDateTime.now() );
         clientDetails.clientStatus( ClientStatus.ACTIVE );
-
-        return clientDetails.build();
-    }
-
-    @Override
-    public ClientDetails mapClientEntity(UpdateClientRequest updateClientRequest, LocalDateTime updateTimeStamp) {
-        if ( updateClientRequest == null && updateTimeStamp == null ) {
-            return null;
-        }
-
-        ClientDetails.ClientDetailsBuilder clientDetails = ClientDetails.builder();
-
-        if ( updateClientRequest != null ) {
-            clientDetails.cifNumber( updateClientRequest.getCifNumber() );
-            clientDetails.clientStatus( updateClientRequest.getClientStatus() );
-            clientDetails.lastName( updateClientRequest.getLastName() );
-            clientDetails.address( updateClientRequest.getAddress() );
-            clientDetails.cellphoneNumber( updateClientRequest.getCellphoneNumber() );
-            clientDetails.email( updateClientRequest.getEmail() );
-            clientDetails.credit( updateClientRequest.getCredit() );
-            clientDetails.employmentStatus( updateClientRequest.getEmploymentStatus() );
-            clientDetails.sourceOfFunds( updateClientRequest.getSourceOfFunds() );
-            clientDetails.verifiedAnnualIncome( updateClientRequest.getVerifiedAnnualIncome() );
-        }
-        clientDetails.updatedAt( updateTimeStamp );
-
-        return clientDetails.build();
-    }
-
-    @Override
-    public ClientDetails mapClientEntity(RemoveClientRequest removeClientRequest) {
-        if ( removeClientRequest == null ) {
-            return null;
-        }
-
-        ClientDetails.ClientDetailsBuilder clientDetails = ClientDetails.builder();
-
-        clientDetails.cifNumber( removeClientRequest.getCifNumber() );
-        clientDetails.reasonForBlock( removeClientRequest.getReason() );
-
-        clientDetails.blockedAt( LocalDateTime.now() );
-        clientDetails.clientStatus( ClientStatus.BLOCKED );
 
         return clientDetails.build();
     }
@@ -128,16 +86,16 @@ public class ClientMapperImpl implements ClientMapper {
     }
 
     @Override
-    public RemoveClientRequest mapRemoveClientRequest(String cifNumber, String reason) {
+    public BasicClientRequest mapRemoveClientRequest(String cifNumber, String reason) {
         if ( cifNumber == null && reason == null ) {
             return null;
         }
 
-        RemoveClientRequest.RemoveClientRequestBuilder removeClientRequest = RemoveClientRequest.builder();
+        BasicClientRequest.BasicClientRequestBuilder basicClientRequest = BasicClientRequest.builder();
 
-        removeClientRequest.cifNumber( cifNumber );
-        removeClientRequest.reason( reason );
+        basicClientRequest.cifNumber( cifNumber );
+        basicClientRequest.reason( reason );
 
-        return removeClientRequest.build();
+        return basicClientRequest.build();
     }
 }

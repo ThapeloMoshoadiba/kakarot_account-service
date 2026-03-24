@@ -21,11 +21,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "client")
 public class ClientDetails {
   @Id
@@ -68,4 +68,7 @@ public class ClientDetails {
 
   LocalDateTime blockedAt;
   String reasonForBlock;
+
+  LocalDateTime unblockedAt;
+  String reasonForUnblock;
 }
