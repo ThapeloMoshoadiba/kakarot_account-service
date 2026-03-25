@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-25T01:54:21+0200",
+    date = "2026-03-25T12:30:29+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -97,7 +97,6 @@ public class AccountMapperImpl implements AccountMapper {
             transactionRequest.accountNumber( account.getAccountNumber() );
         }
         transactionRequest.amount( amount );
-        transactionRequest.transactionId( UUID.randomUUID() );
 
         return transactionRequest.build();
     }

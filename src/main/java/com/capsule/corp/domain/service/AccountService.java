@@ -14,6 +14,7 @@ import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientD
 import com.capsule.corp.infrastructure.http.controllers.enums.AccountStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class AccountService {
   BigDecimal balance;
   ClientDetails client;
   String failureReason;
-  List<Account> accountsList;
+  List<Account> accountsList = new ArrayList<>();
 
   public AccountSummaryResponse openAccount(OpenCreditAccountRequest openCreditAccountRequest) {
     try {
@@ -47,7 +48,8 @@ public class AccountService {
       Account newAccount = accountMapper.mapAccountEntity(client, openCreditAccountRequest);
       accountRepository.save(newAccount);
 
-      if (getAccount(newAccount.getAccountNumber()).getAccountStatus() == AccountStatus.OPEN) {
+      account = getAccount(newAccount.getAccountNumber());
+      if (account.getAccountStatus() == AccountStatus.OPEN) {
         log.info(
             "Credit Account successfully opened for Client [{}]",
             openCreditAccountRequest.getCifNumber());
@@ -70,7 +72,10 @@ public class AccountService {
     try {
       if (accountNumber != null) {
         accountsList.add(getAccount(accountNumber));
-        client = clientService.getClient(null, account.getCifNumber()).getClientDetails();
+        client =
+            clientService
+                .getClient(null, accountsList.getFirst().getCifNumber())
+                .getClientDetails();
       } else if (cifNumber != null) {
         accountsList = getAccounts(cifNumber);
         client = clientService.getClient(null, cifNumber).getClientDetails();

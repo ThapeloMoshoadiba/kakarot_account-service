@@ -39,7 +39,6 @@ public interface AccountMapper {
   @Mapping(target = "success", constant = "true")
   AccountDetailedResponse mapAccountDetailed(ClientDetails client, List<Account> accounts);
 
-  @Mapping(target = "transactionId", expression = "java(UUID.randomUUID())")
   @Mapping(target = "accountNumber", source = "account.accountNumber")
   @Mapping(target = "amount", source = "amount")
   TransactionRequest mapAccountToTransaction(Account account, BigDecimal amount);
