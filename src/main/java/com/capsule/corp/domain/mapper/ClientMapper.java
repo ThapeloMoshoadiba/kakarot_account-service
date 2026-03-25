@@ -1,9 +1,8 @@
 package com.capsule.corp.domain.mapper;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
+import com.capsule.corp.infrastructure.http.controllers.client.resources.request.BasicClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.CreateClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.RemoveClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
 import com.capsule.corp.infrastructure.http.controllers.enums.ClientStatus;
@@ -18,6 +17,7 @@ import org.mapstruct.Mapping;
     imports = {UUID.class, LocalDate.class, LocalDateTime.class, ClientStatus.class})
 public interface ClientMapper {
 
+  @Mapping(target = "clientId", expression = "java(UUID.randomUUID())")
   @Mapping(target = "cifNumber", source = "cifNumber")
   @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
   @Mapping(target = "clientStatus", expression = "java(ClientStatus.ACTIVE)")
@@ -37,26 +37,6 @@ public interface ClientMapper {
   @Mapping(target = "verifiedAnnualIncome", source = "createClientRequest.verifiedAnnualIncome")
   ClientDetails mapClientEntity(CreateClientRequest createClientRequest, String cifNumber);
 
-  @Mapping(target = "updatedAt", source = "updateTimeStamp")
-  @Mapping(target = "cifNumber", source = "updateClientRequest.cifNumber")
-  @Mapping(target = "clientStatus", source = "updateClientRequest.clientStatus")
-  @Mapping(target = "lastName", source = "updateClientRequest.lastName")
-  @Mapping(target = "address", source = "updateClientRequest.address")
-  @Mapping(target = "cellphoneNumber", source = "updateClientRequest.cellphoneNumber")
-  @Mapping(target = "email", source = "updateClientRequest.email")
-  @Mapping(target = "credit", source = "updateClientRequest.credit")
-  @Mapping(target = "employmentStatus", source = "updateClientRequest.employmentStatus")
-  @Mapping(target = "sourceOfFunds", source = "updateClientRequest.sourceOfFunds")
-  @Mapping(target = "verifiedAnnualIncome", source = "updateClientRequest.verifiedAnnualIncome")
-  ClientDetails mapClientEntity(
-      UpdateClientRequest updateClientRequest, LocalDateTime updateTimeStamp);
-
-  @Mapping(target = "blockedAt", expression = "java(LocalDateTime.now())")
-  @Mapping(target = "clientStatus", expression = "java(ClientStatus.BLOCKED)")
-  @Mapping(target = "cifNumber", source = "removeClientRequest.cifNumber")
-  @Mapping(target = "reasonForBlock", source = "removeClientRequest.reason")
-  ClientDetails mapClientEntity(RemoveClientRequest removeClientRequest);
-
   @Mapping(target = "clientDetails", source = "clientDetails")
   @Mapping(target = "success", constant = "true")
   ClientDetailedResponse mapClientDetailed(ClientDetails clientDetails);
@@ -70,5 +50,5 @@ public interface ClientMapper {
 
   @Mapping(target = "cifNumber", source = "cifNumber")
   @Mapping(target = "reason", source = "reason")
-  RemoveClientRequest mapRemoveClientRequest(String cifNumber, String reason);
+  BasicClientRequest mapRemoveClientRequest(String cifNumber, String reason);
 }

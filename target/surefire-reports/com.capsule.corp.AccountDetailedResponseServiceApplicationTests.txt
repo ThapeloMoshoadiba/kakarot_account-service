@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.capsule.corp.AccountDetailedResponseServiceApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.431 s -- in com.capsule.corp.AccountDetailedResponseServiceApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.318 s -- in com.capsule.corp.AccountDetailedResponseServiceApplicationTests

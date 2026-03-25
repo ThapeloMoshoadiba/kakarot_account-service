@@ -20,7 +20,9 @@ CREATE TABLE client
     verified_annual_income              NUMERIC(18, 2),
     client_status                       VARCHAR(40),
     blocked_at                          TIMESTAMP,
-    reason_for_block                    VARCHAR(100)
+    reason_for_block                    VARCHAR(100),
+    unblocked_at                        TIMESTAMP,
+    reason_for_unblock                  VARCHAR(100)
 );
 
 CREATE INDEX client_cif_number_idx ON client (cif_number);

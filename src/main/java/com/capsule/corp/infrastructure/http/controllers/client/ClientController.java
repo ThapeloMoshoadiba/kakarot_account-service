@@ -1,8 +1,8 @@
 package com.capsule.corp.infrastructure.http.controllers.client;
 
 import com.capsule.corp.domain.service.ClientService;
+import com.capsule.corp.infrastructure.http.controllers.client.resources.request.BasicClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.CreateClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.RemoveClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
@@ -56,10 +56,15 @@ public class ClientController {
     return clientService.updateClient(updateClientRequest);
   }
 
-  @Operation(summary = "Remove Client")
-  @PutMapping("/remove")
-  public ClientSummaryResponse blockClient(
-      @RequestBody final RemoveClientRequest removeClientRequest) {
-    return clientService.blockClient(removeClientRequest);
+  @Operation(summary = "Block Client")
+  @PutMapping("/block")
+  public ClientSummaryResponse blockClient(@RequestBody final BasicClientRequest clientRequest) {
+    return clientService.blockClient(clientRequest);
+  }
+
+  @Operation(summary = "Unblock Client")
+  @PutMapping("/unblock")
+  public ClientSummaryResponse unblockClient(@RequestBody final BasicClientRequest clientRequest) {
+    return clientService.unblockClient(clientRequest);
   }
 }

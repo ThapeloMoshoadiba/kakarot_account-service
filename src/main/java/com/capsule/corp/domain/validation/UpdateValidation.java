@@ -1,6 +1,5 @@
 package com.capsule.corp.domain.validation;
 
-import com.capsule.corp.domain.persistance.ClientRepository;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.enums.ClientStatus;
@@ -9,8 +8,10 @@ import com.capsule.corp.infrastructure.http.controllers.enums.EmploymentStatus;
 import com.capsule.corp.infrastructure.http.controllers.enums.SourceOfFunds;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,40 +19,65 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UpdateValidation {
 
-  private final ClientRepository clientRepository;
+  public Optional<ClientDetails> validateUpdate(
+      ClientDetails existingClient, UpdateClientRequest newClientData) {
+    boolean isUpdateValid = false;
 
-  public boolean isUpdateValid(ClientDetails existingClient, UpdateClientRequest newClientData) {
-    if (isClientStatusChanged(existingClient.getClientStatus(), newClientData.getClientStatus())) {
-      return true;
+    if (newClientData.getClientStatus() != null
+        && isClientStatusChanged(
+            existingClient.getClientStatus(), newClientData.getClientStatus())) {
+      existingClient.setClientStatus(newClientData.getClientStatus());
+      isUpdateValid = true;
     }
-    if (isLastNameChanged(existingClient.getLastName(), newClientData.getLastName())) {
-      return true;
+    if (!StringUtils.isBlank(newClientData.getLastName())
+        && isLastNameChanged(existingClient.getLastName(), newClientData.getLastName())) {
+      existingClient.setLastName(newClientData.getLastName());
+      isUpdateValid = true;
     }
-    if (isAddressChanged(existingClient.getAddress(), newClientData.getAddress())) {
-      return true;
+    if (!StringUtils.isBlank(newClientData.getAddress())
+        && isAddressChanged(existingClient.getAddress(), newClientData.getAddress())) {
+      existingClient.setAddress(newClientData.getAddress());
+      isUpdateValid = true;
     }
-    if (isCellChanged(existingClient.getCellphoneNumber(), newClientData.getCellphoneNumber())) {
-      return true;
+    if (!StringUtils.isBlank(newClientData.getCellphoneNumber())
+        && isCellChanged(existingClient.getCellphoneNumber(), newClientData.getCellphoneNumber())) {
+      existingClient.setCellphoneNumber(newClientData.getCellphoneNumber());
+      isUpdateValid = true;
     }
-    if (isEmailChanged(existingClient.getEmail(), newClientData.getEmail())) {
-      return true;
+    if (!StringUtils.isBlank(newClientData.getEmail())
+        && isEmailChanged(existingClient.getEmail(), newClientData.getEmail())) {
+      existingClient.setEmail(newClientData.getEmail());
+      isUpdateValid = true;
     }
-    if (isCreditChanged(existingClient.getCredit(), newClientData.getCredit())) {
-      return true;
+    if (newClientData.getCredit() != null
+        && isCreditChanged(existingClient.getCredit(), newClientData.getCredit())) {
+      existingClient.setCredit(newClientData.getCredit());
+      isUpdateValid = true;
     }
-    if (isEmploymentChanged(
-        existingClient.getEmploymentStatus(), newClientData.getEmploymentStatus())) {
-      return true;
+    if (newClientData.getEmploymentStatus() != null
+        && isEmploymentChanged(
+            existingClient.getEmploymentStatus(), newClientData.getEmploymentStatus())) {
+      existingClient.setEmploymentStatus(newClientData.getEmploymentStatus());
+      isUpdateValid = true;
     }
-    if (isSourceOfFundsChanged(
-        existingClient.getSourceOfFunds(), newClientData.getSourceOfFunds())) {
-      return true;
+    if (newClientData.getSourceOfFunds() != null
+        && isSourceOfFundsChanged(
+            existingClient.getSourceOfFunds(), newClientData.getSourceOfFunds())) {
+      existingClient.setSourceOfFunds(newClientData.getSourceOfFunds());
+      isUpdateValid = true;
     }
-    if (isIncomeChanged(
-        existingClient.getVerifiedAnnualIncome(), newClientData.getVerifiedAnnualIncome())) {
-      return true;
+    if (newClientData.getVerifiedAnnualIncome() != null
+        && isIncomeChanged(
+            existingClient.getVerifiedAnnualIncome(), newClientData.getVerifiedAnnualIncome())) {
+      existingClient.setVerifiedAnnualIncome(newClientData.getVerifiedAnnualIncome());
+      isUpdateValid = true;
     }
-    return false;
+
+    if (!isUpdateValid) {
+      return Optional.empty();
+    }
+
+    return Optional.of(existingClient);
   }
 
   private boolean isClientStatusChanged(

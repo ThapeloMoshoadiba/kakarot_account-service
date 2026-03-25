@@ -10,13 +10,15 @@ import com.capsule.corp.infrastructure.http.controllers.enums.AccountStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-24T13:46:44+0200",
+    date = "2026-03-25T01:54:21+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -32,6 +34,10 @@ public class AccountMapperImpl implements AccountMapper {
 
         if ( client != null ) {
             account.cifNumber( client.getCifNumber() );
+            account.blockedAt( client.getBlockedAt() );
+            account.reasonForBlock( client.getReasonForBlock() );
+            account.unblockedAt( client.getUnblockedAt() );
+            account.reasonForUnblock( client.getReasonForUnblock() );
         }
         if ( openCreditAccountRequest != null ) {
             account.initialCreditAmount( openCreditAccountRequest.getCreditAmount() );
@@ -62,15 +68,18 @@ public class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
-    public AccountDetailedResponse mapAccountDetailed(ClientDetails client, Account account) {
-        if ( client == null && account == null ) {
+    public AccountDetailedResponse mapAccountDetailed(ClientDetails client, List<Account> accounts) {
+        if ( client == null && accounts == null ) {
             return null;
         }
 
         AccountDetailedResponse.AccountDetailedResponseBuilder accountDetailedResponse = AccountDetailedResponse.builder();
 
         accountDetailedResponse.clientDetails( client );
-        accountDetailedResponse.account( account );
+        List<Account> list = accounts;
+        if ( list != null ) {
+            accountDetailedResponse.accounts( new ArrayList<Account>( list ) );
+        }
         accountDetailedResponse.success( true );
 
         return accountDetailedResponse.build();
@@ -84,9 +93,11 @@ public class AccountMapperImpl implements AccountMapper {
 
         TransactionRequest.TransactionRequestBuilder transactionRequest = TransactionRequest.builder();
 
+        if ( account != null ) {
+            transactionRequest.accountNumber( account.getAccountNumber() );
+        }
+        transactionRequest.amount( amount );
         transactionRequest.transactionId( UUID.randomUUID() );
-        transactionRequest.accountNumber( account.getAccountNumber().toString() );
-        transactionRequest.amount( new BigDecimal( "amount" ) );
 
         return transactionRequest.build();
     }

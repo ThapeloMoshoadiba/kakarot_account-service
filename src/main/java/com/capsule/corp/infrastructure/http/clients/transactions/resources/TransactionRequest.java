@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TransactionRequest {
   UUID transactionId;
-  String accountNumber;
+  UUID accountNumber;
   BigDecimal amount;
 }
