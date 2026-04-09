@@ -3,6 +3,8 @@ package com.capsule.corp.infrastructure.http.clients.transactions;
 import com.capsule.corp.common.config.AppConfiguration;
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionRequest;
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionResponse;
+import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionsResponse;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
@@ -42,7 +45,18 @@ public class TransactionServiceClient {
     }
   }
 
-  public void getBalance() {
-    // we don't have it yet in transaction_service
+  public TransactionsResponse getAccountTransactions(final UUID accountNumber) {
+    ResponseEntity<TransactionsResponse> response =
+        transactionServiceRestClient
+            .method(HttpMethod.GET)
+            .uri(
+                UriComponentsBuilder.fromHttpUrl(config.getBaseUrl())
+                    .queryParam("accountNumber", accountNumber)
+                    .toUriString())
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toEntity(new ParameterizedTypeReference<>() {});
+
+    return response.getBody();
   }
 }

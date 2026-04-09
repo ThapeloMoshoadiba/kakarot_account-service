@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,7 +33,8 @@ public class ClientService {
   String failureReason;
   Optional<ClientDetails> client = Optional.empty();
 
-  public ClientSummaryResponse createClient(final CreateClientRequest createClientRequest) {
+  public ResponseEntity<ClientSummaryResponse> createClient(
+      final CreateClientRequest createClientRequest) {
     try {
       String cifNumber = cifGenerator.generateCifNumber();
       ClientDetails newClient = clientMapper.mapClientEntity(createClientRequest, cifNumber);
@@ -40,15 +42,16 @@ public class ClientService {
       clientRepository.save(newClient);
       log.info("Client Successfully Created with CIF [{}]", newClient.getCifNumber());
 
-      return clientMapper.mapClientSummary(newClient);
+      return ResponseEntity.ok(clientMapper.mapClientSummary(newClient));
     } catch (Exception e) {
       failureReason = e.getMessage();
       log.error("Unable to create client: [{}]", failureReason);
     }
-    return ClientSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(
+        ClientSummaryResponse.builder().success(false).reason(failureReason).build());
   }
 
-  public ClientDetailedResponse getClient(String idNumber, String cifNumber) {
+  public ResponseEntity<ClientDetailedResponse> getClient(String idNumber, String cifNumber) {
     try {
       if (idNumber != null) {
         client = clientRepository.findByIdNumber(idNumber);
@@ -57,16 +60,18 @@ public class ClientService {
       }
 
       if (client.isPresent()) {
-        return clientMapper.mapClientDetailed(client.get());
+        return ResponseEntity.ok(clientMapper.mapClientDetailed(client.get()));
       }
     } catch (Exception e) {
       failureReason = e.getMessage();
       log.error("Unable to retrieve client: [{}]", failureReason);
     }
-    return ClientDetailedResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(
+        ClientDetailedResponse.builder().success(false).reason(failureReason).build());
   }
 
-  public ClientDetailedResponse updateClient(final UpdateClientRequest updateClientRequest) {
+  public ResponseEntity<ClientDetailedResponse> updateClient(
+      final UpdateClientRequest updateClientRequest) {
     try {
       client = clientRepository.findByCifNumber(updateClientRequest.getCifNumber());
       if (client.isPresent()) {
@@ -84,22 +89,21 @@ public class ClientService {
           client = clientRepository.findByCifNumber(updateClientRequest.getCifNumber());
           if (client.isPresent() && (client.get().getUpdatedAt()).isEqual(updateTimeStamp)) {
             log.info("Client [{}] successfully updated", updateClientRequest.getCifNumber());
-            return clientMapper.mapClientDetailed(client.get());
+            return ResponseEntity.ok(clientMapper.mapClientDetailed(client.get()));
           }
         }
-        return ClientDetailedResponse.builder()
-            .success(false)
-            .reason("No changes detected")
-            .build();
+        return ResponseEntity.ok(
+            ClientDetailedResponse.builder().success(false).reason("No changes detected").build());
       }
     } catch (Exception e) {
       failureReason = e.getMessage();
       log.error("Unable to update client details [{}]", failureReason);
     }
-    return ClientDetailedResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(
+        ClientDetailedResponse.builder().success(false).reason(failureReason).build());
   }
 
-  public ClientSummaryResponse blockClient(BasicClientRequest clientRequest) {
+  public ResponseEntity<ClientSummaryResponse> blockClient(BasicClientRequest clientRequest) {
     try {
       client = clientRepository.findByCifNumber(clientRequest.getCifNumber());
 
@@ -117,17 +121,18 @@ public class ClientService {
         if (client.isPresent() && (client.get().getClientStatus() == ClientStatus.BLOCKED)) {
           log.info("Client [{}] successfully blocked", clientRequest.getCifNumber());
           // Block client's account too
-          return clientMapper.mapClientSummary(client.get());
+          return ResponseEntity.ok(clientMapper.mapClientSummary(client.get()));
         }
       }
     } catch (Exception e) {
       failureReason = e.getMessage();
       log.error("Unable to block client [{}]: [{}]", clientRequest.getCifNumber(), failureReason);
     }
-    return ClientSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(
+        ClientSummaryResponse.builder().success(false).reason(failureReason).build());
   }
 
-  public ClientSummaryResponse unblockClient(BasicClientRequest clientRequest) {
+  public ResponseEntity<ClientSummaryResponse> unblockClient(BasicClientRequest clientRequest) {
     try {
       client = clientRepository.findByCifNumber(clientRequest.getCifNumber());
 
@@ -145,13 +150,14 @@ public class ClientService {
         if (client.isPresent() && (client.get().getClientStatus() == ClientStatus.ACTIVE)) {
           log.info("Client [{}] successfully unblocked", clientRequest.getCifNumber());
           // Unblock client's account too
-          return clientMapper.mapClientSummary(client.get());
+          return ResponseEntity.ok(clientMapper.mapClientSummary(client.get()));
         }
       }
     } catch (Exception e) {
       failureReason = e.getMessage();
       log.error("Unable to unblock client [{}]: [{}]", clientRequest.getCifNumber(), failureReason);
     }
-    return ClientSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(
+        ClientSummaryResponse.builder().success(false).reason(failureReason).build());
   }
 }

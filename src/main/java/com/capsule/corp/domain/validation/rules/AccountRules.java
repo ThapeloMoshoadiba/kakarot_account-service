@@ -1,8 +1,11 @@
 package com.capsule.corp.domain.validation.rules;
 
+import com.capsule.corp.common.exception.AccountNotFoundException;
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.AccountRepository;
 import com.capsule.corp.domain.persistance.ClientRepository;
+import com.capsule.corp.infrastructure.http.clients.transactions.TransactionServiceClient;
+import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionsResponse;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.Account;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.request.OpenCreditAccountRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Component;
 public class AccountRules {
   private final ClientRepository clientRepository;
   private final AccountRepository accountRepository;
+  private final TransactionServiceClient transactionServiceClient;
 
   public void canAccountBeOpened(
       ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
@@ -40,11 +45,12 @@ public class AccountRules {
     log.info("Open Account Rules Passed for client [{}]", openCreditAccountRequest.getCifNumber());
   }
 
-  public void canAccountBeClosed(Account account, BigDecimal amount, BigDecimal balance) {
+  public void canAccountBeClosed(Account account) {
     log.info("Running Close Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
-    hasBalance(amount, balance);
     notClosed(account.getAccountStatus());
+    hasBalance(account.getAccountNumber());
+    notOpen(account.getAccountStatus());
 
     log.info("Close Account Rules Passed for account [{}]", account.getAccountNumber());
   }
@@ -53,6 +59,7 @@ public class AccountRules {
     log.info("Running Block Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     notBlocked(account.getAccountStatus());
+    notOpen(account.getAccountStatus());
 
     log.info("Block Account Rules Passed for account [{}]", account.getAccountNumber());
   }
@@ -72,13 +79,11 @@ public class AccountRules {
     log.info("Client Exists");
   }
 
-  private void hasBalance(BigDecimal amount, BigDecimal balance) {
-    /*
-    if (balance <= 0 || amount < balance) {
-        throw new BusinessRuleException("Credit Account must be at a Zero balance to Close Account");
+  private void notOpen(AccountStatus status) {
+    if (!(status == AccountStatus.OPEN)) {
+      throw new BusinessRuleException("Account Must be Open");
     }
-    */
-    log.info("Balance Rules Assessed");
+    log.info("Account is Open");
   }
 
   private void notBlocked(AccountStatus status) {
@@ -146,6 +151,21 @@ public class AccountRules {
       throw new BusinessRuleException("Client must be in ACTIVE status");
     }
     log.info("Client is ACTIVE");
+  }
+
+  private void hasBalance(UUID accountNumber) {
+    TransactionsResponse transactionsResponse =
+        transactionServiceClient.getAccountTransactions(accountNumber);
+
+    log.info("Transaction Response: {}", transactionsResponse);
+    if (!transactionsResponse.isSuccess()) {
+      throw new AccountNotFoundException("Account [{}] Not Found", accountNumber.toString());
+    }
+    if (transactionsResponse.getBalance() != null
+        && transactionsResponse.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+      throw new BusinessRuleException("Balance Must Be Zero or Less To Close Account");
+    }
+    log.info("Balance is Valid for Close");
   }
 
   private static int percentOf(BigDecimal base, BigDecimal value) {

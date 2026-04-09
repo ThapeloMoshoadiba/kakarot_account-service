@@ -1,6 +1,7 @@
 com/capsule/corp/domain/persistance/ClientRepository.class
 com/capsule/corp/domain/validation/CifGenerator.class
 com/capsule/corp/infrastructure/http/clients/transactions/TransactionServiceClient.class
+com/capsule/corp/infrastructure/http/clients/transactions/resources/TransactionsResponse.class
 com/capsule/corp/infrastructure/http/clients/transactions/resources/TransactionResponse.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/request/BasicAccountRequest$BasicAccountRequestBuilder.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/request/BasicAccountRequest.class
@@ -12,6 +13,7 @@ com/capsule/corp/domain/mapper/AccountMapperImpl.class
 com/capsule/corp/infrastructure/http/controllers/enums/CreditStanding.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/response/AccountSummaryResponse$AccountSummaryResponseBuilder.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/request/OpenCreditAccountRequest$OpenCreditAccountRequestBuilder.class
+com/capsule/corp/infrastructure/http/clients/transactions/resources/Transaction$TransactionBuilder.class
 com/capsule/corp/infrastructure/http/controllers/enums/Gender.class
 com/capsule/corp/domain/validation/rules/ClientRules.class
 com/capsule/corp/common/config/AppConfiguration$TransactionServiceConfig.class
@@ -21,6 +23,7 @@ com/capsule/corp/common/exception/BusinessRuleException.class
 com/capsule/corp/common/config/WebExchangeLoggingInterceptor$BufferingClientHttpResponseWrapper.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/response/AccountDetailedResponse.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/response/AccountDetailedResponse$AccountDetailedResponseBuilder.class
+com/capsule/corp/infrastructure/http/clients/transactions/resources/Transaction.class
 com/capsule/corp/domain/mapper/ClientMapper.class
 com/capsule/corp/domain/persistance/AccountRepository.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientSummaryResponse$ClientSummaryResponseBuilder.class
@@ -28,6 +31,7 @@ com/capsule/corp/infrastructure/http/controllers/enums/Title.class
 com/capsule/corp/domain/mapper/ClientMapperImpl.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/UpdateClientRequest.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientDetailedResponse.class
+com/capsule/corp/infrastructure/http/clients/transactions/TransactionServiceClient$2.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/BasicClientRequest$BasicClientRequestBuilder.class
 com/capsule/corp/common/exception/AccountNotFoundException.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/BasicClientRequest.class
@@ -47,6 +51,7 @@ com/capsule/corp/infrastructure/http/controllers/account/resources/response/Acco
 com/capsule/corp/domain/service/AccountService.class
 com/capsule/corp/infrastructure/http/controllers/enums/ClientStatus.class
 com/capsule/corp/common/config/RestClientConfig.class
+com/capsule/corp/infrastructure/http/clients/transactions/resources/TransactionsResponse$TransactionsResponseBuilder.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/ClientDetails$ClientDetailsBuilder.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/Account$AccountBuilder.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientSummaryResponse.class

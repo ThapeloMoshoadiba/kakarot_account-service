@@ -6,6 +6,7 @@
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/domain/validation/UpdateValidation.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/account/resources/response/AccountSummaryResponse.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/common/config/WebExchangeLoggingInterceptor.java
+/Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/clients/transactions/resources/TransactionsResponse.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/enums/Title.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/common/config/IntegrationConfig.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/account/AccountController.java
@@ -24,6 +25,7 @@
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/client/ClientController.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/client/resources/request/CreateClientRequest.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientSummaryResponse.java
+/Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/clients/transactions/resources/Transaction.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/account/resources/request/BasicAccountRequest.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/enums/EmploymentStatus.java
 /Users/cp368665/Documents/Work/kakarot/kakarot_account-service/src/main/java/com/capsule/corp/infrastructure/http/controllers/enums/CreditStanding.java
