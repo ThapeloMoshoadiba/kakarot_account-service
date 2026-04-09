@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-09T02:49:11+0200",
+    date = "2026-04-09T14:10:05+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -62,8 +62,6 @@ public class AccountMapperImpl implements AccountMapper {
         accountSummaryResponse.accountStatus( account.getAccountStatus() );
         accountSummaryResponse.initialCreditAmount( account.getInitialCreditAmount() );
 
-        accountSummaryResponse.success( true );
-
         return accountSummaryResponse.build();
     }
 
@@ -80,7 +78,6 @@ public class AccountMapperImpl implements AccountMapper {
         if ( list != null ) {
             accountDetailedResponse.accounts( new ArrayList<Account>( list ) );
         }
-        accountDetailedResponse.success( true );
 
         return accountDetailedResponse.build();
     }

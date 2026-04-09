@@ -8,7 +8,9 @@ com/capsule/corp/infrastructure/http/controllers/account/resources/request/Basic
 com/capsule/corp/domain/validation/rules/AccountRules.class
 com/capsule/corp/AccountServiceApplication.class
 com/capsule/corp/domain/validation/UpdateValidation.class
+com/capsule/corp/infrastructure/http/controllers/GlobalErrorResponse$GlobalErrorResponseBuilder.class
 com/capsule/corp/common/config/WebExchangeLoggingInterceptor.class
+com/capsule/corp/infrastructure/http/controllers/GlobalErrorResponse.class
 com/capsule/corp/domain/mapper/AccountMapperImpl.class
 com/capsule/corp/infrastructure/http/controllers/enums/CreditStanding.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/response/AccountSummaryResponse$AccountSummaryResponseBuilder.class
@@ -31,6 +33,7 @@ com/capsule/corp/infrastructure/http/controllers/enums/Title.class
 com/capsule/corp/domain/mapper/ClientMapperImpl.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/UpdateClientRequest.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientDetailedResponse.class
+com/capsule/corp/common/exception/InvalidUpdateException.class
 com/capsule/corp/infrastructure/http/clients/transactions/TransactionServiceClient$2.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/BasicClientRequest$BasicClientRequestBuilder.class
 com/capsule/corp/common/exception/AccountNotFoundException.class
@@ -60,6 +63,7 @@ com/capsule/corp/infrastructure/http/controllers/enums/AccountStatus.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/ClientDetails.class
 com/capsule/corp/common/config/IntegrationConfig.class
 com/capsule/corp/infrastructure/http/controllers/account/resources/request/OpenCreditAccountRequest.class
+com/capsule/corp/infrastructure/http/resources/Constants.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/response/ClientDetailedResponse$ClientDetailedResponseBuilder.class
 com/capsule/corp/infrastructure/http/controllers/client/resources/request/UpdateClientRequest$UpdateClientRequestBuilder.class
 com/capsule/corp/infrastructure/http/clients/transactions/resources/TransactionRequest.class

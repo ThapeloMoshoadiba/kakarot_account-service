@@ -1,5 +1,10 @@
 package com.capsule.corp.domain.validation.rules;
 
+import static com.capsule.corp.infrastructure.http.resources.Constants.ACTIVE_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.BLOCKED_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_ACTIVE_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_BLOCKED_CLIENT_MESSAGE;
+
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.ClientRepository;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
@@ -37,22 +42,22 @@ public class ClientRules {
 
   private void isClientActive(ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.ACTIVE)) {
-      throw new BusinessRuleException("Client must be in ACTIVE status");
+      throw new BusinessRuleException(NOT_ACTIVE_CLIENT_MESSAGE);
     }
-    log.info("Client is ACTIVE");
+    log.info(ACTIVE_CLIENT_MESSAGE);
   }
 
   private void isClientBlocked(ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.BLOCKED)) {
-      throw new BusinessRuleException("Client must be in BLOCKED status");
+      throw new BusinessRuleException(NOT_BLOCKED_CLIENT_MESSAGE);
     }
-    log.info("Client is BLOCKED");
+    log.info(BLOCKED_CLIENT_MESSAGE);
   }
 
   private void isClientNotBlocked(ClientDetails client) {
     if (client.getClientStatus() == ClientStatus.BLOCKED) {
-      throw new BusinessRuleException("Client already in BLOCKED status");
+      throw new BusinessRuleException(BLOCKED_CLIENT_MESSAGE);
     }
-    log.info("Client is not BLOCKED");
+    log.info(NOT_BLOCKED_CLIENT_MESSAGE);
   }
 }

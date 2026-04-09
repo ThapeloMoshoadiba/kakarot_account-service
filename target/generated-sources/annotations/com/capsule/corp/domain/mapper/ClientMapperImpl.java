@@ -1,7 +1,6 @@
 package com.capsule.corp.domain.mapper;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.BasicClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.CreateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-09T02:49:10+0200",
+    date = "2026-04-09T14:10:06+0200",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.3 (Amazon.com Inc.)"
 )
 @Component
@@ -62,8 +61,6 @@ public class ClientMapperImpl implements ClientMapper {
 
         clientDetailedResponse.clientDetails( clientDetails );
 
-        clientDetailedResponse.success( true );
-
         return clientDetailedResponse.build();
     }
 
@@ -80,22 +77,6 @@ public class ClientMapperImpl implements ClientMapper {
         clientSummaryResponse.lastName( clientDetails.getLastName() );
         clientSummaryResponse.clientStatus( clientDetails.getClientStatus() );
 
-        clientSummaryResponse.success( true );
-
         return clientSummaryResponse.build();
-    }
-
-    @Override
-    public BasicClientRequest mapRemoveClientRequest(String cifNumber, String reason) {
-        if ( cifNumber == null && reason == null ) {
-            return null;
-        }
-
-        BasicClientRequest.BasicClientRequestBuilder basicClientRequest = BasicClientRequest.builder();
-
-        basicClientRequest.cifNumber( cifNumber );
-        basicClientRequest.reason( reason );
-
-        return basicClientRequest.build();
     }
 }

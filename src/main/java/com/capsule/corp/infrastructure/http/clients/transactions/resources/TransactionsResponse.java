@@ -14,7 +14,4 @@ import lombok.NoArgsConstructor;
 public class TransactionsResponse {
   List<Transaction> transactions;
   BigDecimal balance;
-
-  boolean success;
-  String reason;
 }

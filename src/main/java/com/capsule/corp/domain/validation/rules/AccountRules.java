@@ -1,6 +1,20 @@
 package com.capsule.corp.domain.validation.rules;
 
-import com.capsule.corp.common.exception.AccountNotFoundException;
+import static com.capsule.corp.infrastructure.http.resources.Constants.ACTIVE_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.BLOCKED_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.CLIENT_NOT_FOUND_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.CLOSED_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_ACTIVE_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_BLOCKED_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_CLOSED_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_OPEN_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_PRESENT_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.OF_AGE_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.OPEN_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.PRESENT_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.PRESENT_CLIENT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.UNDER_AGE_MESSAGE;
+
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.AccountRepository;
 import com.capsule.corp.domain.persistance.ClientRepository;
@@ -74,59 +88,59 @@ public class AccountRules {
 
   private void hasClient(String cifNumber) {
     if (clientRepository.findByCifNumber(cifNumber).isEmpty()) {
-      throw new BusinessRuleException("Credit Account Present for non-existent Client");
+      throw new BusinessRuleException(CLIENT_NOT_FOUND_MESSAGE);
     }
-    log.info("Client Exists");
+    log.info(PRESENT_CLIENT_MESSAGE);
   }
 
   private void notOpen(AccountStatus status) {
     if (!(status == AccountStatus.OPEN)) {
-      throw new BusinessRuleException("Account Must be Open");
+      throw new BusinessRuleException(NOT_OPEN_ACCOUNT_MESSAGE);
     }
-    log.info("Account is Open");
+    log.info(OPEN_ACCOUNT_MESSAGE);
   }
 
   private void notBlocked(AccountStatus status) {
     if (status == AccountStatus.BLOCKED) {
-      throw new BusinessRuleException("Credit Account Already Blocked");
+      throw new BusinessRuleException(BLOCKED_ACCOUNT_MESSAGE);
     }
-    log.info("Credit Account Not Yet Blocked");
+    log.info(NOT_BLOCKED_ACCOUNT_MESSAGE);
   }
 
   private void isBlocked(AccountStatus status) {
     if (!(status == AccountStatus.BLOCKED)) {
-      throw new BusinessRuleException("Credit Account Must Be Blocked");
+      throw new BusinessRuleException(NOT_BLOCKED_ACCOUNT_MESSAGE);
     }
-    log.info("Credit Account is Blocked");
+    log.info(BLOCKED_ACCOUNT_MESSAGE);
   }
 
   private void notClosed(AccountStatus status) {
     if (status == AccountStatus.CLOSED) {
-      throw new BusinessRuleException("Credit Account Already Closed");
+      throw new BusinessRuleException(CLOSED_ACCOUNT_MESSAGE);
     }
-    log.info("Credit Account Not Yet Closed");
+    log.info(NOT_CLOSED_ACCOUNT_MESSAGE);
   }
 
   private void hasCreditAccount(String cifNumber) {
     Optional<List<Account>> accounts = accountRepository.findByCifNumber(cifNumber);
     if (accounts.isPresent()
         && accounts.get().stream().anyMatch(acc -> acc.getAccountStatus() == AccountStatus.OPEN)) {
-      throw new BusinessRuleException("Open Credit Account already exists for Client");
+      throw new BusinessRuleException(PRESENT_ACCOUNT_MESSAGE);
     }
-    log.info("Client does not have an Open Credit Account");
+    log.info(NOT_PRESENT_ACCOUNT_MESSAGE);
   }
 
   private void isOfAge(LocalDate dob) {
     if (Period.between(dob, LocalDate.now()).getYears() < 18) {
-      throw new BusinessRuleException("Must Be 18 or older");
+      throw new BusinessRuleException(UNDER_AGE_MESSAGE);
     }
-    log.info("Client is of age");
+    log.info(OF_AGE_MESSAGE);
   }
 
   private void isCreditWorthy(
       ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
     if (client.getEmploymentStatus() == EmploymentStatus.UNEMPLOYED) {
-      throw new BusinessRuleException("Must be employed");
+      throw new BusinessRuleException(EmploymentStatus.UNEMPLOYED.toString());
     }
     if (client.getCredit() == CreditStanding.BAD
         || client.getCredit() == CreditStanding.NEEDS_SUPPORT) {
@@ -148,19 +162,15 @@ public class AccountRules {
 
   private void isClientActive(ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.ACTIVE)) {
-      throw new BusinessRuleException("Client must be in ACTIVE status");
+      throw new BusinessRuleException(NOT_ACTIVE_CLIENT_MESSAGE);
     }
-    log.info("Client is ACTIVE");
+    log.info(ACTIVE_CLIENT_MESSAGE);
   }
 
   private void hasBalance(UUID accountNumber) {
     TransactionsResponse transactionsResponse =
         transactionServiceClient.getAccountTransactions(accountNumber);
 
-    log.info("Transaction Response: {}", transactionsResponse);
-    if (!transactionsResponse.isSuccess()) {
-      throw new AccountNotFoundException("Account [{}] Not Found", accountNumber.toString());
-    }
     if (transactionsResponse.getBalance() != null
         && transactionsResponse.getBalance().compareTo(BigDecimal.ZERO) > 0) {
       throw new BusinessRuleException("Balance Must Be Zero or Less To Close Account");

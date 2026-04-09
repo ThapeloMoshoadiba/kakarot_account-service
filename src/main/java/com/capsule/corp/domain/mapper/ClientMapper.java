@@ -1,7 +1,6 @@
 package com.capsule.corp.domain.mapper;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
-import com.capsule.corp.infrastructure.http.controllers.client.resources.request.BasicClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.CreateClientRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientDetailedResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
@@ -38,17 +37,11 @@ public interface ClientMapper {
   ClientDetails mapClientEntity(CreateClientRequest createClientRequest, String cifNumber);
 
   @Mapping(target = "clientDetails", source = "clientDetails")
-  @Mapping(target = "success", constant = "true")
   ClientDetailedResponse mapClientDetailed(ClientDetails clientDetails);
 
   @Mapping(target = "cifNumber", source = "clientDetails.cifNumber")
   @Mapping(target = "firstName", source = "clientDetails.firstName")
   @Mapping(target = "lastName", source = "clientDetails.lastName")
   @Mapping(target = "clientStatus", source = "clientDetails.clientStatus")
-  @Mapping(target = "success", constant = "true")
   ClientSummaryResponse mapClientSummary(ClientDetails clientDetails);
-
-  @Mapping(target = "cifNumber", source = "cifNumber")
-  @Mapping(target = "reason", source = "reason")
-  BasicClientRequest mapRemoveClientRequest(String cifNumber, String reason);
 }

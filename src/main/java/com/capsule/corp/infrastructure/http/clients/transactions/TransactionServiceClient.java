@@ -1,6 +1,7 @@
 package com.capsule.corp.infrastructure.http.clients.transactions;
 
 import com.capsule.corp.common.config.AppConfiguration;
+import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionRequest;
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionResponse;
 import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionsResponse;
@@ -24,24 +25,17 @@ public class TransactionServiceClient {
   private final RestClient transactionServiceRestClient;
 
   public void openAccountTransaction(final TransactionRequest transactionRequest) {
-    try {
-      ResponseEntity<TransactionResponse> response =
-          transactionServiceRestClient
-              .method(HttpMethod.PUT)
-              .uri("%s%s".formatted(config.getBaseUrl(), config.getOpenEndpoint()))
-              .body(transactionRequest)
-              .contentType(MediaType.APPLICATION_JSON)
-              .retrieve()
-              .toEntity(new ParameterizedTypeReference<>() {});
+    ResponseEntity<TransactionResponse> response =
+        transactionServiceRestClient
+            .method(HttpMethod.PUT)
+            .uri("%s%s".formatted(config.getBaseUrl(), config.getOpenEndpoint()))
+            .body(transactionRequest)
+            .contentType(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .toEntity(new ParameterizedTypeReference<>() {});
 
-      if (response.getStatusCode().is2xxSuccessful()) {
-        log.info("Opening transaction successfully executed");
-      }
-    } catch (Exception e) {
-      log.error(
-          "Error Running Opening Balance Transaction: [{}] [{}]",
-          transactionRequest.getAccountNumber(),
-          e.getMessage());
+    if (response.getStatusCode().is2xxSuccessful()) {
+      log.info("Opening transaction successfully executed");
     }
   }
 
@@ -57,6 +51,10 @@ public class TransactionServiceClient {
             .retrieve()
             .toEntity(new ParameterizedTypeReference<>() {});
 
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      throw new BusinessRuleException("Could Not Retrieve Transactions");
+    }
+    log.info("Successfully retrieved transactions");
     return response.getBody();
   }
 }
