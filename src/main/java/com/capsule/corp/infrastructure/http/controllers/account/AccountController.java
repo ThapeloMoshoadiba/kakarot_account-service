@@ -7,10 +7,11 @@ import com.capsule.corp.infrastructure.http.controllers.account.resources.respon
 import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.math.BigDecimal;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -35,14 +36,14 @@ public class AccountController {
 
   @Operation(summary = "Open New Credit Account")
   @PutMapping
-  public AccountSummaryResponse openAccount(
-      @RequestBody final OpenCreditAccountRequest openCreditAccountRequest) {
+  public ResponseEntity<AccountSummaryResponse> openAccount(
+      @Valid @RequestBody final OpenCreditAccountRequest openCreditAccountRequest) {
     return accountService.openAccount(openCreditAccountRequest);
   }
 
   @Operation(summary = "Retrieve Account Details")
   @GetMapping
-  public AccountDetailedResponse getAccount(
+  public ResponseEntity<AccountDetailedResponse> getAccount(
       @RequestParam(value = "accountNumber", required = false) final UUID accountNumber,
       @RequestParam(value = "cifNumber", required = false) final String cifNumber) {
     return accountService.getAccount(accountNumber, cifNumber);
@@ -50,30 +51,22 @@ public class AccountController {
 
   @Operation(summary = "Block Account")
   @PutMapping("/block")
-  public AccountSummaryResponse blockAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> blockAccount(
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.blockAccount(accountRequest);
   }
 
   @Operation(summary = "Unblock Account")
   @PutMapping("/unblock")
-  public AccountSummaryResponse unblockAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> unblockAccount(
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.unblockAccount(accountRequest);
-  }
-
-  @Operation(summary = "Close Account With Balance")
-  @PutMapping("/close-balance")
-  public AccountSummaryResponse closeAccountWithBalance(
-      @RequestParam final BigDecimal amount,
-      @RequestBody final BasicAccountRequest accountRequest) {
-    return accountService.closeAccountWithBalance(accountRequest, amount);
   }
 
   @Operation(summary = "Close Account")
   @PutMapping("/close")
-  public AccountSummaryResponse closeAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> closeAccount(
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.closeAccount(accountRequest);
   }
 }

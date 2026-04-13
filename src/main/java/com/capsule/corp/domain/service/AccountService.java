@@ -1,5 +1,7 @@
 package com.capsule.corp.domain.service;
 
+import static com.capsule.corp.infrastructure.http.resources.Constants.ACCOUNT_NOT_FOUND_MESSAGE;
+
 import com.capsule.corp.common.exception.AccountNotFoundException;
 import com.capsule.corp.domain.mapper.AccountMapper;
 import com.capsule.corp.domain.persistance.AccountRepository;
@@ -12,7 +14,6 @@ import com.capsule.corp.infrastructure.http.controllers.account.resources.respon
 import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountSummaryResponse;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
 import com.capsule.corp.infrastructure.http.controllers.enums.AccountStatus;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -33,174 +35,96 @@ public class AccountService {
   private final AccountRepository accountRepository;
   private final TransactionServiceClient transactionServiceClient;
 
-  Account account;
-  BigDecimal balance;
-  ClientDetails client;
-  String failureReason;
-  List<Account> accountsList = new ArrayList<>();
+  private Account account;
+  private ClientDetails client;
+  private List<Account> accountsList = new ArrayList<>();
 
-  public AccountSummaryResponse openAccount(OpenCreditAccountRequest openCreditAccountRequest) {
-    try {
+  public ResponseEntity<AccountSummaryResponse> openAccount(
+      final OpenCreditAccountRequest openCreditAccountRequest) {
+    client =
+        clientService
+            .getClient(null, openCreditAccountRequest.getCifNumber())
+            .getBody()
+            .getClientDetails();
+    accountRules.canAccountBeOpened(client, openCreditAccountRequest);
+
+    Account newAccount = accountMapper.mapAccountEntity(client, openCreditAccountRequest);
+    accountRepository.save(newAccount);
+
+    transactionServiceClient.openAccountTransaction(
+        accountMapper.mapAccountToTransaction(getAccount(newAccount.getAccountNumber()), openCreditAccountRequest.getCreditAmount()));
+
+    return ResponseEntity.ok(accountMapper.mapAccountSummary(newAccount));
+  }
+
+  public ResponseEntity<AccountDetailedResponse> getAccount(
+      final UUID accountNumber, final String cifNumber) {
+    if (accountNumber != null) {
+      accountsList.add(getAccount(accountNumber));
       client =
-          clientService.getClient(null, openCreditAccountRequest.getCifNumber()).getClientDetails();
-      accountRules.canAccountBeOpened(client, openCreditAccountRequest);
-
-      Account newAccount = accountMapper.mapAccountEntity(client, openCreditAccountRequest);
-      accountRepository.save(newAccount);
-
-      account = getAccount(newAccount.getAccountNumber());
-      if (account.getAccountStatus() == AccountStatus.OPEN) {
-        log.info(
-            "Credit Account successfully opened for Client [{}]",
-            openCreditAccountRequest.getCifNumber());
-
-        transactionServiceClient.openAccountTransaction(
-            accountMapper.mapAccountToTransaction(
-                account, openCreditAccountRequest.getCreditAmount()));
-        return accountMapper.mapAccountSummary(newAccount);
-      }
-
-    } catch (Exception e) {
-      failureReason = e.getMessage();
-      log.error(
-          "Unable to open account for Client [{}]: [{}]", client.getCifNumber(), failureReason);
+          clientService
+              .getClient(null, accountsList.getFirst().getCifNumber())
+              .getBody()
+              .getClientDetails();
+    } else if (cifNumber != null) {
+      accountsList = getAccounts(cifNumber);
+      client = clientService.getClient(null, cifNumber).getBody().getClientDetails();
     }
-    return AccountSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(accountMapper.mapAccountDetailed(client, accountsList));
   }
 
-  public AccountDetailedResponse getAccount(UUID accountNumber, String cifNumber) {
-    try {
-      if (accountNumber != null) {
-        accountsList.add(getAccount(accountNumber));
-        client =
-            clientService
-                .getClient(null, accountsList.getFirst().getCifNumber())
-                .getClientDetails();
-      } else if (cifNumber != null) {
-        accountsList = getAccounts(cifNumber);
-        client = clientService.getClient(null, cifNumber).getClientDetails();
-      }
-      return accountMapper.mapAccountDetailed(client, accountsList);
-    } catch (Exception e) {
-      log.error("Unable to retrieve account: ", e);
-      failureReason = e.getMessage();
-    }
+  public ResponseEntity<AccountSummaryResponse> blockAccount(
+      final BasicAccountRequest accountRequest) {
+    account = getAccount(accountRequest.getAccountNumber());
+    accountRules.canAccountBeBlocked(account);
 
-    return AccountDetailedResponse.builder().success(false).reason(failureReason).build();
+    account.setAccountStatus(AccountStatus.BLOCKED);
+    account.setBlockedAt(LocalDateTime.now());
+    account.setReasonForBlock(accountRequest.getReason());
+    accountRepository.save(account);
+
+    return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  public AccountSummaryResponse blockAccount(BasicAccountRequest accountRequest) {
-    try {
-      account = getAccount(accountRequest.getAccountNumber());
-      accountRules.canAccountBeBlocked(account);
+  public ResponseEntity<AccountSummaryResponse> unblockAccount(
+      final BasicAccountRequest accountRequest) {
+    account = getAccount(accountRequest.getAccountNumber());
+    accountRules.canAccountBeUnblocked(account);
 
-      account.setAccountStatus(AccountStatus.BLOCKED);
-      account.setBlockedAt(LocalDateTime.now());
-      account.setReasonForBlock(accountRequest.getReasonForClose());
-      accountRepository.save(account);
+    account.setAccountStatus(AccountStatus.OPEN);
+    account.setUnblockedAt(LocalDateTime.now());
+    account.setReasonForUnblock(accountRequest.getReason());
+    accountRepository.save(account);
 
-      if (getAccount(accountRequest.getAccountNumber()).getAccountStatus()
-          == AccountStatus.BLOCKED) {
-        log.info("Credit Account [{}] successfully blocked", account.getAccountNumber());
-        return accountMapper.mapAccountSummary(account);
-      }
-    } catch (Exception e) {
-      log.error("Unable to block account [{}]", accountRequest.getAccountNumber(), e);
-      failureReason = e.getMessage();
-    }
-    return AccountSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  public AccountSummaryResponse unblockAccount(BasicAccountRequest accountRequest) {
-    try {
-      account = getAccount(accountRequest.getAccountNumber());
-      accountRules.canAccountBeUnblocked(account);
+  public ResponseEntity<AccountSummaryResponse> closeAccount(
+      final BasicAccountRequest accountRequest) {
+    account = getAccount(accountRequest.getAccountNumber());
+    accountRules.canAccountBeClosed(account);
 
-      account.setAccountStatus(AccountStatus.OPEN);
-      account.setUnblockedAt(LocalDateTime.now());
-      account.setReasonForUnblock(accountRequest.getReasonForClose());
-      accountRepository.save(account);
+    account.setAccountStatus(AccountStatus.CLOSED);
+    account.setClosedAt(LocalDateTime.now());
+    account.setReasonForClose(accountRequest.getReason());
+    accountRepository.save(account);
 
-      if (getAccount(accountRequest.getAccountNumber()).getAccountStatus() == AccountStatus.OPEN) {
-        log.info("Credit Account [{}] successfully unblocked", account.getAccountNumber());
-        return accountMapper.mapAccountSummary(account);
-      }
-    } catch (Exception e) {
-      failureReason = e.getMessage();
-      log.error(
-          "Unable to unblock account [{}]: [{}]", accountRequest.getAccountNumber(), failureReason);
-    }
-    return AccountSummaryResponse.builder().success(false).reason(failureReason).build();
+    return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  public AccountSummaryResponse closeAccount(BasicAccountRequest accountRequest) {
-    try {
-      // call the getBalance method
-      account = getAccount(accountRequest.getAccountNumber());
-      accountRules.canAccountBeClosed(account, null, balance);
-
-      account.setAccountStatus(AccountStatus.CLOSED);
-      account.setClosedAt(LocalDateTime.now());
-      account.setReasonForClose(accountRequest.getReasonForClose());
-      accountRepository.save(account);
-
-      if (getAccount(accountRequest.getAccountNumber()).getAccountStatus()
-          == AccountStatus.CLOSED) {
-        log.info("Credit Account [{}] successfully closed", account.getAccountNumber());
-        return accountMapper.mapAccountSummary(account);
-      }
-    } catch (Exception e) {
-      failureReason = e.getMessage();
-      log.error(
-          "Unable to close account [{}]: [{}]", accountRequest.getAccountNumber(), failureReason);
+  private Account getAccount(final UUID accountNumber) {
+    Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
+    if (optionalAccount.isEmpty()) {
+      throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
     }
-    return AccountSummaryResponse.builder().success(false).reason(failureReason).build();
+    return optionalAccount.get();
   }
 
-  public AccountSummaryResponse closeAccountWithBalance(
-      BasicAccountRequest accountRequest, BigDecimal amount) {
-    try {
-      // call the getBalance method
-      account = getAccount(accountRequest.getAccountNumber());
-      accountRules.canAccountBeClosed(account, amount, balance);
-
-      // First make payment request to pay off the balance THEN we can close the account
-      account.setAccountStatus(AccountStatus.CLOSED);
-      account.setClosedAt(LocalDateTime.now());
-      account.setReasonForClose(accountRequest.getReasonForClose());
-      accountRepository.save(account);
-
-      if (getAccount(accountRequest.getAccountNumber()).getAccountStatus()
-          == AccountStatus.CLOSED) {
-        log.info("Credit Account [{}] successfully closed", account.getAccountNumber());
-        return accountMapper.mapAccountSummary(account);
-      }
-    } catch (Exception e) {
-      failureReason = e.getMessage();
-      log.error(
-          "Unable to close account [{}]: [{}]", accountRequest.getAccountNumber(), failureReason);
-    }
-    return AccountSummaryResponse.builder().success(false).reason(failureReason).build();
-  }
-
-  private Account getAccount(UUID accountNumber) {
-    Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
-    if (account.isEmpty()) {
-      throw new AccountNotFoundException("Account not found");
-    }
-    return account.get();
-  }
-
-  private List<Account> getAccounts(String cifNumber) {
+  private List<Account> getAccounts(final String cifNumber) {
     Optional<List<Account>> accounts = accountRepository.findByCifNumber(cifNumber);
     if (accounts.isEmpty()) {
-      throw new AccountNotFoundException("Account not found");
+      throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
     }
     return accounts.get();
-  }
-
-  private BigDecimal getBalance(String cifNumber) {
-    // does not exist yet in transaction service
-    return null;
   }
 }

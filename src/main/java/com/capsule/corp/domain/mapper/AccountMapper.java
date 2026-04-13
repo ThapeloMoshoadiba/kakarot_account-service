@@ -31,12 +31,10 @@ public interface AccountMapper {
   @Mapping(target = "accountNumber", source = "account.accountNumber")
   @Mapping(target = "accountStatus", source = "account.accountStatus")
   @Mapping(target = "initialCreditAmount", source = "account.initialCreditAmount")
-  @Mapping(target = "success", constant = "true")
   AccountSummaryResponse mapAccountSummary(Account account);
 
   @Mapping(target = "clientDetails", source = "client")
   @Mapping(target = "accounts", source = "accounts")
-  @Mapping(target = "success", constant = "true")
   AccountDetailedResponse mapAccountDetailed(ClientDetails client, List<Account> accounts);
 
   @Mapping(target = "accountNumber", source = "account.accountNumber")

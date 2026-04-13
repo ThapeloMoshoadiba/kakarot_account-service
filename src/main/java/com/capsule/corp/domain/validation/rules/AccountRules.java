@@ -1,8 +1,16 @@
 package com.capsule.corp.domain.validation.rules;
 
+import static com.capsule.corp.infrastructure.http.resources.Constants.CLIENT_NOT_FOUND_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_ACCOUNT_STATUS_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_AGE_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_CLIENT_STATUS_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.PRESENT_ACCOUNT_MESSAGE;
+
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.AccountRepository;
 import com.capsule.corp.domain.persistance.ClientRepository;
+import com.capsule.corp.infrastructure.http.clients.transactions.TransactionServiceClient;
+import com.capsule.corp.infrastructure.http.clients.transactions.resources.TransactionsResponse;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.Account;
 import com.capsule.corp.infrastructure.http.controllers.account.resources.request.OpenCreditAccountRequest;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
@@ -17,6 +25,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,9 +36,10 @@ import org.springframework.stereotype.Component;
 public class AccountRules {
   private final ClientRepository clientRepository;
   private final AccountRepository accountRepository;
+  private final TransactionServiceClient transactionServiceClient;
 
   public void canAccountBeOpened(
-      ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
+      final ClientDetails client, final OpenCreditAccountRequest openCreditAccountRequest) {
     log.info("Running Open Account Rules for client [{}]", openCreditAccountRequest.getCifNumber());
     hasCreditAccount(openCreditAccountRequest.getCifNumber());
     isOfAge(client.getDateOfBirth());
@@ -40,24 +50,26 @@ public class AccountRules {
     log.info("Open Account Rules Passed for client [{}]", openCreditAccountRequest.getCifNumber());
   }
 
-  public void canAccountBeClosed(Account account, BigDecimal amount, BigDecimal balance) {
+  public void canAccountBeClosed(final Account account) {
     log.info("Running Close Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
-    hasBalance(amount, balance);
     notClosed(account.getAccountStatus());
+    hasBalance(account.getAccountNumber());
+    notOpen(account.getAccountStatus());
 
     log.info("Close Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  public void canAccountBeBlocked(Account account) {
+  public void canAccountBeBlocked(final Account account) {
     log.info("Running Block Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     notBlocked(account.getAccountStatus());
+    notOpen(account.getAccountStatus());
 
     log.info("Block Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  public void canAccountBeUnblocked(Account account) {
+  public void canAccountBeUnblocked(final Account account) {
     log.info("Running Unblock Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     isBlocked(account.getAccountStatus());
@@ -65,63 +77,54 @@ public class AccountRules {
     log.info("Unblock Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  private void hasClient(String cifNumber) {
+  private void hasClient(final String cifNumber) {
     if (clientRepository.findByCifNumber(cifNumber).isEmpty()) {
-      throw new BusinessRuleException("Credit Account Present for non-existent Client");
+      throw new BusinessRuleException(CLIENT_NOT_FOUND_MESSAGE);
     }
-    log.info("Client Exists");
   }
 
-  private void hasBalance(BigDecimal amount, BigDecimal balance) {
-    /*
-    if (balance <= 0 || amount < balance) {
-        throw new BusinessRuleException("Credit Account must be at a Zero balance to Close Account");
+  private void notOpen(final AccountStatus status) {
+    if (!(status == AccountStatus.OPEN)) {
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    */
-    log.info("Balance Rules Assessed");
   }
 
-  private void notBlocked(AccountStatus status) {
+  private void notBlocked(final AccountStatus status) {
     if (status == AccountStatus.BLOCKED) {
-      throw new BusinessRuleException("Credit Account Already Blocked");
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info("Credit Account Not Yet Blocked");
   }
 
-  private void isBlocked(AccountStatus status) {
+  private void isBlocked(final AccountStatus status) {
     if (!(status == AccountStatus.BLOCKED)) {
-      throw new BusinessRuleException("Credit Account Must Be Blocked");
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info("Credit Account is Blocked");
   }
 
-  private void notClosed(AccountStatus status) {
+  private void notClosed(final AccountStatus status) {
     if (status == AccountStatus.CLOSED) {
-      throw new BusinessRuleException("Credit Account Already Closed");
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info("Credit Account Not Yet Closed");
   }
 
-  private void hasCreditAccount(String cifNumber) {
+  private void hasCreditAccount(final String cifNumber) {
     Optional<List<Account>> accounts = accountRepository.findByCifNumber(cifNumber);
     if (accounts.isPresent()
         && accounts.get().stream().anyMatch(acc -> acc.getAccountStatus() == AccountStatus.OPEN)) {
-      throw new BusinessRuleException("Open Credit Account already exists for Client");
+      throw new BusinessRuleException(PRESENT_ACCOUNT_MESSAGE);
     }
-    log.info("Client does not have an Open Credit Account");
   }
 
-  private void isOfAge(LocalDate dob) {
+  private void isOfAge(final LocalDate dob) {
     if (Period.between(dob, LocalDate.now()).getYears() < 18) {
-      throw new BusinessRuleException("Must Be 18 or older");
+      throw new BusinessRuleException(INVALID_AGE_MESSAGE);
     }
-    log.info("Client is of age");
   }
 
   private void isCreditWorthy(
-      ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
+      final ClientDetails client, final OpenCreditAccountRequest openCreditAccountRequest) {
     if (client.getEmploymentStatus() == EmploymentStatus.UNEMPLOYED) {
-      throw new BusinessRuleException("Must be employed");
+      throw new BusinessRuleException(EmploymentStatus.UNEMPLOYED.toString());
     }
     if (client.getCredit() == CreditStanding.BAD
         || client.getCredit() == CreditStanding.NEEDS_SUPPORT) {
@@ -131,24 +134,32 @@ public class AccountRules {
         <= 25)) {
       throw new BusinessRuleException("Credit must be 25% or less of total annual income");
     }
-    log.info("Client is credit-worthy");
   }
 
-  private void hasIncome(SourceOfFunds sourceOfFunds) {
+  private void hasIncome(final SourceOfFunds sourceOfFunds) {
     if (sourceOfFunds == SourceOfFunds.NONE) {
       throw new BusinessRuleException("Must have an income");
     }
-    log.info("Client has income");
   }
 
-  private void isClientActive(ClientDetails client) {
+  private void isClientActive(final ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.ACTIVE)) {
-      throw new BusinessRuleException("Client must be in ACTIVE status");
+      throw new BusinessRuleException(INVALID_CLIENT_STATUS_MESSAGE);
     }
-    log.info("Client is ACTIVE");
   }
 
-  private static int percentOf(BigDecimal base, BigDecimal value) {
+  private void hasBalance(final UUID accountNumber) {
+    TransactionsResponse transactionsResponse =
+        transactionServiceClient.getAccountTransactions(accountNumber);
+
+    if (transactionsResponse.getBalance() != null
+        && transactionsResponse.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+      throw new BusinessRuleException("Balance Must Be Zero or Less To Close Account");
+    }
+    log.info("Balance is Valid for Close");
+  }
+
+  private static int percentOf(final BigDecimal base, final BigDecimal value) {
     return (value.divide(base, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)))
         .intValue();
   }

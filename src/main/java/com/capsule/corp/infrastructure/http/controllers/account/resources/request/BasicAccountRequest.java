@@ -1,17 +1,20 @@
 package com.capsule.corp.infrastructure.http.controllers.account.resources.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class BasicAccountRequest {
 
-  UUID accountNumber;
-  String reasonForClose;
+  @NotNull private UUID accountNumber;
+
+  @NotBlank private String reason;
 }

@@ -2,7 +2,6 @@ package com.capsule.corp.domain.validation;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.enums.ClientStatus;
 import com.capsule.corp.infrastructure.http.controllers.enums.CreditStanding;
 import com.capsule.corp.infrastructure.http.controllers.enums.EmploymentStatus;
 import com.capsule.corp.infrastructure.http.controllers.enums.SourceOfFunds;
@@ -20,15 +19,9 @@ import org.springframework.stereotype.Component;
 public class UpdateValidation {
 
   public Optional<ClientDetails> validateUpdate(
-      ClientDetails existingClient, UpdateClientRequest newClientData) {
+      final ClientDetails existingClient, final UpdateClientRequest newClientData) {
     boolean isUpdateValid = false;
 
-    if (newClientData.getClientStatus() != null
-        && isClientStatusChanged(
-            existingClient.getClientStatus(), newClientData.getClientStatus())) {
-      existingClient.setClientStatus(newClientData.getClientStatus());
-      isUpdateValid = true;
-    }
     if (!StringUtils.isBlank(newClientData.getLastName())
         && isLastNameChanged(existingClient.getLastName(), newClientData.getLastName())) {
       existingClient.setLastName(newClientData.getLastName());
@@ -80,41 +73,38 @@ public class UpdateValidation {
     return Optional.of(existingClient);
   }
 
-  private boolean isClientStatusChanged(
-      ClientStatus existingClientStatus, ClientStatus newClientStatus) {
-    return existingClientStatus != newClientStatus;
-  }
-
-  private boolean isLastNameChanged(String existingLastName, String newLastName) {
+  private boolean isLastNameChanged(final String existingLastName, final String newLastName) {
     return !Objects.equals(existingLastName, newLastName);
   }
 
-  private boolean isAddressChanged(String existingAddress, String newAddress) {
+  private boolean isAddressChanged(final String existingAddress, final String newAddress) {
     return !Objects.equals(existingAddress, newAddress);
   }
 
-  private boolean isCellChanged(String existingCell, String newCell) {
+  private boolean isCellChanged(final String existingCell, final String newCell) {
     return !Objects.equals(existingCell, newCell);
   }
 
-  private boolean isEmailChanged(String existingEmail, String newEmail) {
+  private boolean isEmailChanged(final String existingEmail, final String newEmail) {
     return !Objects.equals(existingEmail, newEmail);
   }
 
-  private boolean isCreditChanged(CreditStanding existingCredit, CreditStanding newCredit) {
+  private boolean isCreditChanged(
+      final CreditStanding existingCredit, final CreditStanding newCredit) {
     return existingCredit != newCredit;
   }
 
   private boolean isEmploymentChanged(
-      EmploymentStatus existingEmploymentStatus, EmploymentStatus newEmploymentStatus) {
+      final EmploymentStatus existingEmploymentStatus, final EmploymentStatus newEmploymentStatus) {
     return existingEmploymentStatus != newEmploymentStatus;
   }
 
-  private boolean isSourceOfFundsChanged(SourceOfFunds existingSof, SourceOfFunds newSof) {
+  private boolean isSourceOfFundsChanged(
+      final SourceOfFunds existingSof, final SourceOfFunds newSof) {
     return existingSof != newSof;
   }
 
-  private boolean isIncomeChanged(BigDecimal existingIncome, BigDecimal newIncome) {
+  private boolean isIncomeChanged(final BigDecimal existingIncome, final BigDecimal newIncome) {
     return !Objects.equals(existingIncome, newIncome);
   }
 }

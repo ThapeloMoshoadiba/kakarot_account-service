@@ -7,7 +7,5 @@ import lombok.Data;
 @Data
 @Builder
 public class ClientDetailedResponse {
-  ClientDetails clientDetails;
-  boolean success;
-  String reason;
+  private ClientDetails clientDetails;
 }

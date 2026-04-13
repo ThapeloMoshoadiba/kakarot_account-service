@@ -1,5 +1,6 @@
 package com.capsule.corp.infrastructure.http.controllers.client.resources.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BasicClientRequest {
 
-  String cifNumber;
-  String reason;
+  @NotBlank private String cifNumber;
+
+  @NotBlank private String reason;
 }

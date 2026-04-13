@@ -1,7 +1,7 @@
 package com.capsule.corp.infrastructure.http.clients.transactions.resources;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionRequest {
-  private UUID accountNumber;
-  private BigDecimal amount;
+public class TransactionsResponse {
+  private List<Transaction> transactions;
+  private BigDecimal balance;
 }
