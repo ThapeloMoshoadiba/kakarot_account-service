@@ -22,6 +22,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 app:
+  api:
+    version: @project.version@
   integration:
     transaction-service:
       base-url: http://localhost:8082/api/v1/transaction-service/transactions

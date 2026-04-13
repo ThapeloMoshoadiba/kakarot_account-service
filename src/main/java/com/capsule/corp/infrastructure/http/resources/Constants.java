@@ -6,20 +6,19 @@ public class Constants {
   public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Account Not Found";
   public static final String NO_CHANGES_DETECTED_MESSAGE = "No Changes Detected";
 
-  // Rule Constants
-  public static final String UNDER_AGE_MESSAGE = "Below 18";
-  public static final String OF_AGE_MESSAGE = "18 and Older";
-  public static final String OPEN_ACCOUNT_MESSAGE = "Account is Open";
-  public static final String ACTIVE_CLIENT_MESSAGE = "Client is Active";
-  public static final String BLOCKED_CLIENT_MESSAGE = "Client is Blocked";
+  public static final String INVALID_AGE_MESSAGE = "Invalid Age";
+  public static final String INVALID_EMAIL_MESSAGE = "Invalid ID Number";
   public static final String PRESENT_CLIENT_MESSAGE = "Client is Present";
-  public static final String CLOSED_ACCOUNT_MESSAGE = "Account is Closed";
-  public static final String BLOCKED_ACCOUNT_MESSAGE = "Account is Blocked";
   public static final String PRESENT_ACCOUNT_MESSAGE = "Account is Present";
-  public static final String NOT_OPEN_ACCOUNT_MESSAGE = "Account is not Open";
-  public static final String NOT_ACTIVE_CLIENT_MESSAGE = "Client is not Active";
-  public static final String NOT_CLOSED_ACCOUNT_MESSAGE = "Account is not Closed";
-  public static final String NOT_BLOCKED_CLIENT_MESSAGE = "Client is not Blocked";
-  public static final String NOT_BLOCKED_ACCOUNT_MESSAGE = "Account is not Blocked";
-  public static final String NOT_PRESENT_ACCOUNT_MESSAGE = "Account is not Present";
+  public static final String INVALID_ID_NUMBER_MESSAGE = "Invalid ID Number";
+  public static final String CANNOT_COMMUNICATE_MESSAGE = "Cannot Communicate";
+  public static final String INVALID_CELLPHONE_NUMBER_MESSAGE = "Invalid ID Number";
+  public static final String INVALID_CLIENT_STATUS_MESSAGE = "Invalid Client Status";
+  public static final String INVALID_ACCOUNT_STATUS_MESSAGE = "Invalid Account Status";
+
+  // Patterns
+  public static final String SA_ID_NUMBER_PATTERN =
+      "^(\\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])\\d{7}$";
+  public static final String EMAIL_PATTERN = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+  public static final String CELLPHONE_NUMBER_PATTERN = "^(\\+27|0)(6|7|8)[0-9]{8}$";
 }

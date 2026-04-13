@@ -1,19 +1,10 @@
 package com.capsule.corp.domain.validation.rules;
 
-import static com.capsule.corp.infrastructure.http.resources.Constants.ACTIVE_CLIENT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.BLOCKED_ACCOUNT_MESSAGE;
 import static com.capsule.corp.infrastructure.http.resources.Constants.CLIENT_NOT_FOUND_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.CLOSED_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_ACTIVE_CLIENT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_BLOCKED_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_CLOSED_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_OPEN_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.NOT_PRESENT_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.OF_AGE_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.OPEN_ACCOUNT_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_ACCOUNT_STATUS_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_AGE_MESSAGE;
+import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_CLIENT_STATUS_MESSAGE;
 import static com.capsule.corp.infrastructure.http.resources.Constants.PRESENT_ACCOUNT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.PRESENT_CLIENT_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.UNDER_AGE_MESSAGE;
 
 import com.capsule.corp.common.exception.BusinessRuleException;
 import com.capsule.corp.domain.persistance.AccountRepository;
@@ -90,35 +81,30 @@ public class AccountRules {
     if (clientRepository.findByCifNumber(cifNumber).isEmpty()) {
       throw new BusinessRuleException(CLIENT_NOT_FOUND_MESSAGE);
     }
-    log.info(PRESENT_CLIENT_MESSAGE);
   }
 
   private void notOpen(AccountStatus status) {
     if (!(status == AccountStatus.OPEN)) {
-      throw new BusinessRuleException(NOT_OPEN_ACCOUNT_MESSAGE);
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info(OPEN_ACCOUNT_MESSAGE);
   }
 
   private void notBlocked(AccountStatus status) {
     if (status == AccountStatus.BLOCKED) {
-      throw new BusinessRuleException(BLOCKED_ACCOUNT_MESSAGE);
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info(NOT_BLOCKED_ACCOUNT_MESSAGE);
   }
 
   private void isBlocked(AccountStatus status) {
     if (!(status == AccountStatus.BLOCKED)) {
-      throw new BusinessRuleException(NOT_BLOCKED_ACCOUNT_MESSAGE);
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info(BLOCKED_ACCOUNT_MESSAGE);
   }
 
   private void notClosed(AccountStatus status) {
     if (status == AccountStatus.CLOSED) {
-      throw new BusinessRuleException(CLOSED_ACCOUNT_MESSAGE);
+      throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
-    log.info(NOT_CLOSED_ACCOUNT_MESSAGE);
   }
 
   private void hasCreditAccount(String cifNumber) {
@@ -127,14 +113,12 @@ public class AccountRules {
         && accounts.get().stream().anyMatch(acc -> acc.getAccountStatus() == AccountStatus.OPEN)) {
       throw new BusinessRuleException(PRESENT_ACCOUNT_MESSAGE);
     }
-    log.info(NOT_PRESENT_ACCOUNT_MESSAGE);
   }
 
   private void isOfAge(LocalDate dob) {
     if (Period.between(dob, LocalDate.now()).getYears() < 18) {
-      throw new BusinessRuleException(UNDER_AGE_MESSAGE);
+      throw new BusinessRuleException(INVALID_AGE_MESSAGE);
     }
-    log.info(OF_AGE_MESSAGE);
   }
 
   private void isCreditWorthy(
@@ -150,21 +134,18 @@ public class AccountRules {
         <= 25)) {
       throw new BusinessRuleException("Credit must be 25% or less of total annual income");
     }
-    log.info("Client is credit-worthy");
   }
 
   private void hasIncome(SourceOfFunds sourceOfFunds) {
     if (sourceOfFunds == SourceOfFunds.NONE) {
       throw new BusinessRuleException("Must have an income");
     }
-    log.info("Client has income");
   }
 
   private void isClientActive(ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.ACTIVE)) {
-      throw new BusinessRuleException(NOT_ACTIVE_CLIENT_MESSAGE);
+      throw new BusinessRuleException(INVALID_CLIENT_STATUS_MESSAGE);
     }
-    log.info(ACTIVE_CLIENT_MESSAGE);
   }
 
   private void hasBalance(UUID accountNumber) {

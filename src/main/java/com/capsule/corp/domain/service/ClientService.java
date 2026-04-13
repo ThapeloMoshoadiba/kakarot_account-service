@@ -39,8 +39,7 @@ public class ClientService {
 
   public ResponseEntity<ClientSummaryResponse> createClient(
       final CreateClientRequest createClientRequest) {
-    // Check if Client Already Exists. Have some create client rules (e.g., id number check in DB
-    // etc.)
+    clientRules.canCreateClient(createClientRequest);
     String cifNumber = cifGenerator.generateCifNumber();
     ClientDetails newClient = clientMapper.mapClientEntity(createClientRequest, cifNumber);
 
