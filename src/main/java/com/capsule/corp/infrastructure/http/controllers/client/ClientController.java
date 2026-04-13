@@ -39,7 +39,7 @@ public class ClientController {
   @Operation(summary = "Create Client")
   @PutMapping
   public ResponseEntity<ClientSummaryResponse> createClient(
-      @Valid @RequestBody final CreateClientRequest createClientRequest) throws Exception {
+      @Valid @RequestBody final CreateClientRequest createClientRequest) {
     return clientService.createClient(createClientRequest);
   }
 

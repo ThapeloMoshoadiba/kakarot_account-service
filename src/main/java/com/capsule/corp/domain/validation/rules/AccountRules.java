@@ -39,7 +39,7 @@ public class AccountRules {
   private final TransactionServiceClient transactionServiceClient;
 
   public void canAccountBeOpened(
-      ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
+      final ClientDetails client, final OpenCreditAccountRequest openCreditAccountRequest) {
     log.info("Running Open Account Rules for client [{}]", openCreditAccountRequest.getCifNumber());
     hasCreditAccount(openCreditAccountRequest.getCifNumber());
     isOfAge(client.getDateOfBirth());
@@ -50,7 +50,7 @@ public class AccountRules {
     log.info("Open Account Rules Passed for client [{}]", openCreditAccountRequest.getCifNumber());
   }
 
-  public void canAccountBeClosed(Account account) {
+  public void canAccountBeClosed(final Account account) {
     log.info("Running Close Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     notClosed(account.getAccountStatus());
@@ -60,7 +60,7 @@ public class AccountRules {
     log.info("Close Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  public void canAccountBeBlocked(Account account) {
+  public void canAccountBeBlocked(final Account account) {
     log.info("Running Block Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     notBlocked(account.getAccountStatus());
@@ -69,7 +69,7 @@ public class AccountRules {
     log.info("Block Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  public void canAccountBeUnblocked(Account account) {
+  public void canAccountBeUnblocked(final Account account) {
     log.info("Running Unblock Account Rules for account [{}]", account.getAccountNumber());
     hasClient(account.getCifNumber());
     isBlocked(account.getAccountStatus());
@@ -77,37 +77,37 @@ public class AccountRules {
     log.info("Unblock Account Rules Passed for account [{}]", account.getAccountNumber());
   }
 
-  private void hasClient(String cifNumber) {
+  private void hasClient(final String cifNumber) {
     if (clientRepository.findByCifNumber(cifNumber).isEmpty()) {
       throw new BusinessRuleException(CLIENT_NOT_FOUND_MESSAGE);
     }
   }
 
-  private void notOpen(AccountStatus status) {
+  private void notOpen(final AccountStatus status) {
     if (!(status == AccountStatus.OPEN)) {
       throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
   }
 
-  private void notBlocked(AccountStatus status) {
+  private void notBlocked(final AccountStatus status) {
     if (status == AccountStatus.BLOCKED) {
       throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
   }
 
-  private void isBlocked(AccountStatus status) {
+  private void isBlocked(final AccountStatus status) {
     if (!(status == AccountStatus.BLOCKED)) {
       throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
   }
 
-  private void notClosed(AccountStatus status) {
+  private void notClosed(final AccountStatus status) {
     if (status == AccountStatus.CLOSED) {
       throw new BusinessRuleException(INVALID_ACCOUNT_STATUS_MESSAGE);
     }
   }
 
-  private void hasCreditAccount(String cifNumber) {
+  private void hasCreditAccount(final String cifNumber) {
     Optional<List<Account>> accounts = accountRepository.findByCifNumber(cifNumber);
     if (accounts.isPresent()
         && accounts.get().stream().anyMatch(acc -> acc.getAccountStatus() == AccountStatus.OPEN)) {
@@ -115,14 +115,14 @@ public class AccountRules {
     }
   }
 
-  private void isOfAge(LocalDate dob) {
+  private void isOfAge(final LocalDate dob) {
     if (Period.between(dob, LocalDate.now()).getYears() < 18) {
       throw new BusinessRuleException(INVALID_AGE_MESSAGE);
     }
   }
 
   private void isCreditWorthy(
-      ClientDetails client, OpenCreditAccountRequest openCreditAccountRequest) {
+      final ClientDetails client, final OpenCreditAccountRequest openCreditAccountRequest) {
     if (client.getEmploymentStatus() == EmploymentStatus.UNEMPLOYED) {
       throw new BusinessRuleException(EmploymentStatus.UNEMPLOYED.toString());
     }
@@ -136,19 +136,19 @@ public class AccountRules {
     }
   }
 
-  private void hasIncome(SourceOfFunds sourceOfFunds) {
+  private void hasIncome(final SourceOfFunds sourceOfFunds) {
     if (sourceOfFunds == SourceOfFunds.NONE) {
       throw new BusinessRuleException("Must have an income");
     }
   }
 
-  private void isClientActive(ClientDetails client) {
+  private void isClientActive(final ClientDetails client) {
     if (!(client.getClientStatus() == ClientStatus.ACTIVE)) {
       throw new BusinessRuleException(INVALID_CLIENT_STATUS_MESSAGE);
     }
   }
 
-  private void hasBalance(UUID accountNumber) {
+  private void hasBalance(final UUID accountNumber) {
     TransactionsResponse transactionsResponse =
         transactionServiceClient.getAccountTransactions(accountNumber);
 
@@ -159,7 +159,7 @@ public class AccountRules {
     log.info("Balance is Valid for Close");
   }
 
-  private static int percentOf(BigDecimal base, BigDecimal value) {
+  private static int percentOf(final BigDecimal base, final BigDecimal value) {
     return (value.divide(base, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)))
         .intValue();
   }

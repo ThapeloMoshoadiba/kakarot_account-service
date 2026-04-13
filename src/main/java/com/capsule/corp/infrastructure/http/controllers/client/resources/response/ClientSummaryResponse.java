@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 @Builder
 public class ClientSummaryResponse {
-  String cifNumber;
-  String firstName;
-  String lastName;
-  ClientStatus clientStatus;
+  private String cifNumber;
+  private String firstName;
+  private String lastName;
+  private ClientStatus clientStatus;
 }

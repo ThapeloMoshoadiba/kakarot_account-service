@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BasicClientRequest {
 
-  @NotBlank String cifNumber;
+  @NotBlank private String cifNumber;
 
-  @NotBlank String reason;
+  @NotBlank private String reason;
 }

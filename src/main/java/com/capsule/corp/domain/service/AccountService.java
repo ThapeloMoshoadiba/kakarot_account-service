@@ -35,12 +35,12 @@ public class AccountService {
   private final AccountRepository accountRepository;
   private final TransactionServiceClient transactionServiceClient;
 
-  Account account;
-  ClientDetails client;
-  List<Account> accountsList = new ArrayList<>();
+  private Account account;
+  private ClientDetails client;
+  private List<Account> accountsList = new ArrayList<>();
 
   public ResponseEntity<AccountSummaryResponse> openAccount(
-      OpenCreditAccountRequest openCreditAccountRequest) {
+      final OpenCreditAccountRequest openCreditAccountRequest) {
     client =
         clientService
             .getClient(null, openCreditAccountRequest.getCifNumber())
@@ -57,7 +57,8 @@ public class AccountService {
     return ResponseEntity.ok(accountMapper.mapAccountSummary(newAccount));
   }
 
-  public ResponseEntity<AccountDetailedResponse> getAccount(UUID accountNumber, String cifNumber) {
+  public ResponseEntity<AccountDetailedResponse> getAccount(
+      final UUID accountNumber, final String cifNumber) {
     if (accountNumber != null) {
       accountsList.add(getAccount(accountNumber));
       client =
@@ -72,7 +73,8 @@ public class AccountService {
     return ResponseEntity.ok(accountMapper.mapAccountDetailed(client, accountsList));
   }
 
-  public ResponseEntity<AccountSummaryResponse> blockAccount(BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> blockAccount(
+      final BasicAccountRequest accountRequest) {
     account = getAccount(accountRequest.getAccountNumber());
     accountRules.canAccountBeBlocked(account);
 
@@ -84,7 +86,8 @@ public class AccountService {
     return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  public ResponseEntity<AccountSummaryResponse> unblockAccount(BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> unblockAccount(
+      final BasicAccountRequest accountRequest) {
     account = getAccount(accountRequest.getAccountNumber());
     accountRules.canAccountBeUnblocked(account);
 
@@ -96,7 +99,8 @@ public class AccountService {
     return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  public ResponseEntity<AccountSummaryResponse> closeAccount(BasicAccountRequest accountRequest) {
+  public ResponseEntity<AccountSummaryResponse> closeAccount(
+      final BasicAccountRequest accountRequest) {
     account = getAccount(accountRequest.getAccountNumber());
     accountRules.canAccountBeClosed(account);
 
@@ -108,15 +112,15 @@ public class AccountService {
     return ResponseEntity.ok(accountMapper.mapAccountSummary(account));
   }
 
-  private Account getAccount(UUID accountNumber) {
-    Optional<Account> account = accountRepository.findByAccountNumber(accountNumber);
-    if (account.isEmpty()) {
+  private Account getAccount(final UUID accountNumber) {
+    Optional<Account> optionalAccount = accountRepository.findByAccountNumber(accountNumber);
+    if (optionalAccount.isEmpty()) {
       throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
     }
-    return account.get();
+    return optionalAccount.get();
   }
 
-  private List<Account> getAccounts(String cifNumber) {
+  private List<Account> getAccounts(final String cifNumber) {
     Optional<List<Account>> accounts = accountRepository.findByCifNumber(cifNumber);
     if (accounts.isEmpty()) {
       throw new AccountNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);

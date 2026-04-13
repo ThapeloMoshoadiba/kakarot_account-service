@@ -21,22 +21,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateClientRequest {
 
-  @NotBlank String cifNumber;
+  @NotBlank private String cifNumber;
 
-  String lastName;
+  private String lastName;
 
-  String address;
+  private String address;
 
   @Nullable
   @Pattern(regexp = CELLPHONE_NUMBER_PATTERN)
-  String cellphoneNumber;
+  private String cellphoneNumber;
 
   @Nullable
   @Pattern(regexp = EMAIL_PATTERN)
-  String email;
+  private String email;
 
-  CreditStanding credit;
-  EmploymentStatus employmentStatus;
-  SourceOfFunds sourceOfFunds;
-  BigDecimal verifiedAnnualIncome;
+  private CreditStanding credit;
+  private EmploymentStatus employmentStatus;
+  private SourceOfFunds sourceOfFunds;
+  private BigDecimal verifiedAnnualIncome;
 }

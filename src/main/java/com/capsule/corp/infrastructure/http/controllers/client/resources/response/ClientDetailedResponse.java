@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @Builder
 public class ClientDetailedResponse {
-  ClientDetails clientDetails;
+  private ClientDetails clientDetails;
 }

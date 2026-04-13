@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Transaction {
 
-  UUID transactionId;
+  private UUID transactionId;
 
-  UUID accountNumber;
-  LocalDateTime timestamp;
-  BigDecimal amount;
-  String initiator;
+  private UUID accountNumber;
+  private LocalDateTime timestamp;
+  private BigDecimal amount;
+  private String initiator;
 
-  String transactionType;
-  String entryType;
+  private String transactionType;
+  private String entryType;
 }

@@ -26,36 +26,37 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateClientRequest {
 
-  @NotNull Title title;
+  @NotNull private Title title;
 
-  @NotNull Gender gender;
+  @NotNull private Gender gender;
 
   @NotBlank
   @Pattern(regexp = SA_ID_NUMBER_PATTERN)
-  String idNumber;
+  private String idNumber;
 
-  @NotNull LocalDate dateOfBirth;
+  @NotNull private LocalDate dateOfBirth;
 
-  @NotBlank String firstName;
+  @NotBlank private String firstName;
 
-  String middleName;
+  private String middleName;
 
-  @NotBlank String lastName;
+  @NotBlank private String lastName;
 
-  @NotBlank String address;
+  @NotBlank private String address;
 
   @Nullable
   @Pattern(regexp = CELLPHONE_NUMBER_PATTERN)
-  String cellphoneNumber;
+  private String cellphoneNumber;
 
   @Nullable
   @Pattern(regexp = EMAIL_PATTERN)
-  String email;
+  private String email;
 
-  CreditStanding credit;
+  private CreditStanding credit;
 
-  @NotNull EmploymentStatus employmentStatus;
+  @NotNull private EmploymentStatus employmentStatus;
 
-  SourceOfFunds sourceOfFunds;
-  BigDecimal verifiedAnnualIncome;
+  @NotNull private SourceOfFunds sourceOfFunds;
+
+  @NotNull private BigDecimal verifiedAnnualIncome;
 }

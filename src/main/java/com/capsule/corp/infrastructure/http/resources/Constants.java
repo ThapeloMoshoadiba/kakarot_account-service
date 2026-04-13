@@ -1,5 +1,6 @@
 package com.capsule.corp.infrastructure.http.resources;
 
+@SuppressWarnings("HideUtilityClassConstructor")
 public class Constants {
   // Error Messages
   public static final String DATABASE_ERROR_MESSAGE = "Database Error";
@@ -8,6 +9,7 @@ public class Constants {
   public static final String NO_CHANGES_DETECTED_MESSAGE = "No Changes Detected";
 
   public static final String INVALID_AGE_MESSAGE = "Invalid Age";
+  public static final String INVALID_INCOME_MESSAGE = "Invalid Income";
   public static final String INVALID_REQUEST_MESSAGE = "Invalid Request";
   public static final String PRESENT_CLIENT_MESSAGE = "Client is Present";
   public static final String PRESENT_ACCOUNT_MESSAGE = "Account is Present";

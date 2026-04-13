@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OpenCreditAccountRequest {
 
-  @NotBlank String cifNumber;
+  @NotBlank private String cifNumber;
 
-  @NotNull @Positive BigDecimal creditAmount;
+  @NotNull @Positive private BigDecimal creditAmount;
 }

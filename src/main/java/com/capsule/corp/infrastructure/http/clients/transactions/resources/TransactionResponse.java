@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionResponse {
-  UUID transactionId;
+  private UUID transactionId;
 }

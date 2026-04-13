@@ -30,45 +30,45 @@ import lombok.NoArgsConstructor;
 public class ClientDetails {
   @Id
   @Column(name = "client_id", nullable = false, updatable = false)
-  UUID clientId;
+  private UUID clientId;
 
-  LocalDateTime createdAt;
-  LocalDateTime updatedAt;
-  String cifNumber;
-
-  @Enumerated(EnumType.STRING)
-  Title title;
-
-  String firstName;
-  String middleName;
-  String lastName;
-  String idNumber;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+  private String cifNumber;
 
   @Enumerated(EnumType.STRING)
-  Gender gender;
+  private Title title;
 
-  LocalDate dateOfBirth;
-  String address;
-  String cellphoneNumber;
-  String email;
-
-  @Enumerated(EnumType.STRING)
-  CreditStanding credit;
+  private String firstName;
+  private String middleName;
+  private String lastName;
+  private String idNumber;
 
   @Enumerated(EnumType.STRING)
-  EmploymentStatus employmentStatus;
+  private Gender gender;
+
+  private LocalDate dateOfBirth;
+  private String address;
+  private String cellphoneNumber;
+  private String email;
 
   @Enumerated(EnumType.STRING)
-  SourceOfFunds sourceOfFunds;
-
-  BigDecimal verifiedAnnualIncome;
+  private CreditStanding credit;
 
   @Enumerated(EnumType.STRING)
-  ClientStatus clientStatus;
+  private EmploymentStatus employmentStatus;
 
-  LocalDateTime blockedAt;
-  String reasonForBlock;
+  @Enumerated(EnumType.STRING)
+  private SourceOfFunds sourceOfFunds;
 
-  LocalDateTime unblockedAt;
-  String reasonForUnblock;
+  private BigDecimal verifiedAnnualIncome;
+
+  @Enumerated(EnumType.STRING)
+  private ClientStatus clientStatus;
+
+  private LocalDateTime blockedAt;
+  private String reasonForBlock;
+
+  private LocalDateTime unblockedAt;
+  private String reasonForUnblock;
 }

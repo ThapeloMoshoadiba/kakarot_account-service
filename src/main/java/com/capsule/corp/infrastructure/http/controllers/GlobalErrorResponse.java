@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class GlobalErrorResponse {
 
-  @Builder.Default boolean success = false;
-  String reason;
+  @Builder.Default private boolean success = false;
+  private String reason;
 }

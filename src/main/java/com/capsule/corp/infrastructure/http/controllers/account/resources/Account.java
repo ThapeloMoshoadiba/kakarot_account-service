@@ -25,23 +25,23 @@ public class Account {
 
   @Id
   @Column(name = "account_id", nullable = false, updatable = false)
-  UUID accountId;
+  private UUID accountId;
 
-  LocalDateTime createdAt;
-  String cifNumber;
-  UUID accountNumber;
+  private LocalDateTime createdAt;
+  private String cifNumber;
+  private UUID accountNumber;
 
   @Enumerated(EnumType.STRING)
-  AccountStatus accountStatus;
+  private AccountStatus accountStatus;
 
-  BigDecimal initialCreditAmount;
+  private BigDecimal initialCreditAmount;
 
-  LocalDateTime blockedAt;
-  String reasonForBlock;
+  private LocalDateTime blockedAt;
+  private String reasonForBlock;
 
-  LocalDateTime unblockedAt;
-  String reasonForUnblock;
+  private LocalDateTime unblockedAt;
+  private String reasonForUnblock;
 
-  LocalDateTime closedAt;
-  String reasonForClose;
+  private LocalDateTime closedAt;
+  private String reasonForClose;
 }

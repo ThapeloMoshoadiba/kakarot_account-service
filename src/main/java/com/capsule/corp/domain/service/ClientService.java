@@ -47,7 +47,8 @@ public class ClientService {
     return ResponseEntity.ok(clientMapper.mapClientSummary(newClient));
   }
 
-  public ResponseEntity<ClientDetailedResponse> getClient(String idNumber, String cifNumber) {
+  public ResponseEntity<ClientDetailedResponse> getClient(
+      final String idNumber, final String cifNumber) {
     if (idNumber != null) {
       client = clientRepository.findByIdNumber(idNumber);
     } else if (cifNumber != null) {
@@ -77,7 +78,7 @@ public class ClientService {
     return ResponseEntity.ok(clientMapper.mapClientDetailed(updatedClient));
   }
 
-  public ResponseEntity<ClientSummaryResponse> blockClient(BasicClientRequest clientRequest) {
+  public ResponseEntity<ClientSummaryResponse> blockClient(final BasicClientRequest clientRequest) {
     ClientDetails clientToBeBlocked = getClient(clientRequest.getCifNumber());
     clientRules.canClientBeBlocked(clientToBeBlocked);
 
@@ -87,11 +88,11 @@ public class ClientService {
 
     clientRepository.save(clientToBeBlocked);
 
-    // TODO: Block Client's Account Too
     return ResponseEntity.ok(clientMapper.mapClientSummary(clientToBeBlocked));
   }
 
-  public ResponseEntity<ClientSummaryResponse> unblockClient(BasicClientRequest clientRequest) {
+  public ResponseEntity<ClientSummaryResponse> unblockClient(
+      final BasicClientRequest clientRequest) {
     ClientDetails clientToBeUnblocked = getClient(clientRequest.getCifNumber());
     clientRules.canClientBeUnblocked(clientToBeUnblocked);
 
@@ -101,11 +102,10 @@ public class ClientService {
 
     clientRepository.save(clientToBeUnblocked);
 
-    // TODO: Unblock Client's Account Too
     return ResponseEntity.ok(clientMapper.mapClientSummary(clientToBeUnblocked));
   }
 
-  private ClientDetails getClient(String cifNumber) {
+  private ClientDetails getClient(final String cifNumber) {
     client = clientRepository.findByCifNumber(cifNumber);
     if (client.isEmpty()) {
       throw new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE);
