@@ -2,7 +2,6 @@ package com.capsule.corp.domain.validation;
 
 import com.capsule.corp.infrastructure.http.controllers.client.resources.ClientDetails;
 import com.capsule.corp.infrastructure.http.controllers.client.resources.request.UpdateClientRequest;
-import com.capsule.corp.infrastructure.http.controllers.enums.ClientStatus;
 import com.capsule.corp.infrastructure.http.controllers.enums.CreditStanding;
 import com.capsule.corp.infrastructure.http.controllers.enums.EmploymentStatus;
 import com.capsule.corp.infrastructure.http.controllers.enums.SourceOfFunds;
@@ -23,12 +22,6 @@ public class UpdateValidation {
       ClientDetails existingClient, UpdateClientRequest newClientData) {
     boolean isUpdateValid = false;
 
-    if (newClientData.getClientStatus() != null
-        && isClientStatusChanged(
-            existingClient.getClientStatus(), newClientData.getClientStatus())) {
-      existingClient.setClientStatus(newClientData.getClientStatus());
-      isUpdateValid = true;
-    }
     if (!StringUtils.isBlank(newClientData.getLastName())
         && isLastNameChanged(existingClient.getLastName(), newClientData.getLastName())) {
       existingClient.setLastName(newClientData.getLastName());
@@ -78,11 +71,6 @@ public class UpdateValidation {
     }
 
     return Optional.of(existingClient);
-  }
-
-  private boolean isClientStatusChanged(
-      ClientStatus existingClientStatus, ClientStatus newClientStatus) {
-    return existingClientStatus != newClientStatus;
   }
 
   private boolean isLastNameChanged(String existingLastName, String newLastName) {

@@ -8,6 +8,7 @@ import com.capsule.corp.infrastructure.http.controllers.client.resources.respons
 import com.capsule.corp.infrastructure.http.controllers.client.resources.response.ClientSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ClientController {
   @Operation(summary = "Create Client")
   @PutMapping
   public ResponseEntity<ClientSummaryResponse> createClient(
-      @RequestBody final CreateClientRequest createClientRequest) throws Exception {
+      @Valid @RequestBody final CreateClientRequest createClientRequest) throws Exception {
     return clientService.createClient(createClientRequest);
   }
 
@@ -53,21 +54,21 @@ public class ClientController {
   @Operation(summary = "Update Client Data")
   @PutMapping("/update")
   public ResponseEntity<ClientDetailedResponse> updateClient(
-      @RequestBody final UpdateClientRequest updateClientRequest) {
+      @Valid @RequestBody final UpdateClientRequest updateClientRequest) {
     return clientService.updateClient(updateClientRequest);
   }
 
   @Operation(summary = "Block Client")
   @PutMapping("/block")
   public ResponseEntity<ClientSummaryResponse> blockClient(
-      @RequestBody final BasicClientRequest clientRequest) {
+      @Valid @RequestBody final BasicClientRequest clientRequest) {
     return clientService.blockClient(clientRequest);
   }
 
   @Operation(summary = "Unblock Client")
   @PutMapping("/unblock")
   public ResponseEntity<ClientSummaryResponse> unblockClient(
-      @RequestBody final BasicClientRequest clientRequest) {
+      @Valid @RequestBody final BasicClientRequest clientRequest) {
     return clientService.unblockClient(clientRequest);
   }
 }

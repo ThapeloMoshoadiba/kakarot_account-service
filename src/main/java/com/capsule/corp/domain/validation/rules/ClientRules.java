@@ -94,10 +94,8 @@ public class ClientRules {
     }
   }
 
-  private boolean isValidDateOfBirth(String id, LocalDate providedDateOfBirth) {
-    LocalDate idDateOfBirth =
-        LocalDate.parse(id.substring(0, 6), DateTimeFormatter.ofPattern("yyMMdd"));
-    return idDateOfBirth.equals(providedDateOfBirth);
+  private boolean isValidDateOfBirth(String id, LocalDate dateOfBirth) {
+    return (id.substring(0, 6)).equals(dateOfBirth.format(DateTimeFormatter.ofPattern("yyMMdd")));
   }
 
   private boolean luhnCheck(String id) {

@@ -2,9 +2,6 @@ package com.capsule.corp.infrastructure.http.controllers.client.resources.reques
 
 import static com.capsule.corp.infrastructure.http.resources.Constants.CELLPHONE_NUMBER_PATTERN;
 import static com.capsule.corp.infrastructure.http.resources.Constants.EMAIL_PATTERN;
-import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_CELLPHONE_NUMBER_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_EMAIL_MESSAGE;
-import static com.capsule.corp.infrastructure.http.resources.Constants.INVALID_ID_NUMBER_MESSAGE;
 import static com.capsule.corp.infrastructure.http.resources.Constants.SA_ID_NUMBER_PATTERN;
 
 import com.capsule.corp.infrastructure.http.controllers.enums.CreditStanding;
@@ -34,7 +31,7 @@ public class CreateClientRequest {
   @NotNull Gender gender;
 
   @NotBlank
-  @Pattern(regexp = SA_ID_NUMBER_PATTERN, message = INVALID_ID_NUMBER_MESSAGE)
+  @Pattern(regexp = SA_ID_NUMBER_PATTERN)
   String idNumber;
 
   @NotNull LocalDate dateOfBirth;
@@ -48,11 +45,11 @@ public class CreateClientRequest {
   @NotBlank String address;
 
   @Nullable
-  @Pattern(regexp = CELLPHONE_NUMBER_PATTERN, message = INVALID_CELLPHONE_NUMBER_MESSAGE)
+  @Pattern(regexp = CELLPHONE_NUMBER_PATTERN)
   String cellphoneNumber;
 
   @Nullable
-  @Pattern(regexp = EMAIL_PATTERN, message = INVALID_EMAIL_MESSAGE)
+  @Pattern(regexp = EMAIL_PATTERN)
   String email;
 
   CreditStanding credit;

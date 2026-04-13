@@ -7,6 +7,7 @@ import com.capsule.corp.infrastructure.http.controllers.account.resources.respon
 import com.capsule.corp.infrastructure.http.controllers.account.resources.response.AccountSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class AccountController {
   @Operation(summary = "Open New Credit Account")
   @PutMapping
   public ResponseEntity<AccountSummaryResponse> openAccount(
-      @RequestBody final OpenCreditAccountRequest openCreditAccountRequest) {
+      @Valid @RequestBody final OpenCreditAccountRequest openCreditAccountRequest) {
     return accountService.openAccount(openCreditAccountRequest);
   }
 
@@ -51,21 +52,21 @@ public class AccountController {
   @Operation(summary = "Block Account")
   @PutMapping("/block")
   public ResponseEntity<AccountSummaryResponse> blockAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.blockAccount(accountRequest);
   }
 
   @Operation(summary = "Unblock Account")
   @PutMapping("/unblock")
   public ResponseEntity<AccountSummaryResponse> unblockAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.unblockAccount(accountRequest);
   }
 
   @Operation(summary = "Close Account")
   @PutMapping("/close")
   public ResponseEntity<AccountSummaryResponse> closeAccount(
-      @RequestBody final BasicAccountRequest accountRequest) {
+      @Valid @RequestBody final BasicAccountRequest accountRequest) {
     return accountService.closeAccount(accountRequest);
   }
 }
