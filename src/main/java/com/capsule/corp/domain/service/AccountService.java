@@ -52,7 +52,7 @@ public class AccountService {
     accountRepository.save(newAccount);
 
     transactionServiceClient.openAccountTransaction(
-        accountMapper.mapAccountToTransaction(account, openCreditAccountRequest.getCreditAmount()));
+        accountMapper.mapAccountToTransaction(getAccount(newAccount.getAccountNumber()), openCreditAccountRequest.getCreditAmount()));
 
     return ResponseEntity.ok(accountMapper.mapAccountSummary(newAccount));
   }
